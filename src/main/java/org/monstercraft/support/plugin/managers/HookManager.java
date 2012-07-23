@@ -3,7 +3,7 @@ package org.monstercraft.support.plugin.managers;
 import net.milkbowl.vault.permission.Permission;
 
 import org.monstercraft.support.MonsterTickets;
-import org.monstercraft.support.plugin.hooks.VaultPermissionsHook;
+import org.monstercraft.support.plugin.managers.hooks.VaultPermissionsHook;
 
 /**
  * This class manages all of the hooks used within the plugin.

@@ -1,4 +1,4 @@
-package org.monstercraft.support.plugin.hooks;
+package org.monstercraft.support.plugin.managers.hooks;
 
 import net.milkbowl.vault.permission.Permission;
 
