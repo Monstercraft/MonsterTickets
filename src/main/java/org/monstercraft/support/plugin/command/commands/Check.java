@@ -30,17 +30,24 @@ public class Check extends GameCommand {
 				}
 			}
 		}
-		String[] temp = new String[split.length - 1];
-		int i = 0;
 		for (String s : split) {
 			if (s.equalsIgnoreCase("-closed")) {
 				show_closed = true;
-				continue;
+				break;
 			}
-			temp[i] = s;
-			i++;
 		}
-		split = temp;
+		if (show_closed) {
+			String[] temp = new String[split.length - 1];
+			int i = 0;
+			for (String s : split) {
+				if (s.equalsIgnoreCase("-closed")) {
+					continue;
+				}
+				temp[i] = s;
+				i++;
+			}
+			split = temp;
+		}
 		sender.sendMessage(ChatColor.RED
 				+ "Listing all open support tickets! ("
 				+ Variables.tickets.size() + ")");
@@ -82,9 +89,11 @@ public class Check extends GameCommand {
 				sender.sendMessage(ChatColor.RED + "Invalid number!");
 				return true;
 			}
-			int id = 1;
-			if (Variables.tickets.getLast() != null) {
-				id = Variables.tickets.getLast().getID();
+			int id;
+			try {
+				id = Variables.tickets.getLast().getID() + 1;
+			} catch (Exception e) {
+				id = 1;
 			}
 			if (id < Integer.parseInt(split[1])
 					|| Integer.parseInt(split[1]) < 1) {
