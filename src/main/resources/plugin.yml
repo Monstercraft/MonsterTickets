@@ -1,0 +1,53 @@
+name: MonsterTickets
+main: org.monstercraft.support.MonsterTickets
+version: '${project.version}'
+author: Fletch_to_99
+description: A ticket management system.
+depend: [Vault]
+commands:
+  request:
+    description: Used to open a help ticket.
+    usage: /request (description) or /help (description)
+  claim:
+    description: Used to claim a help ticket.
+    usage: /claim (id)
+  close:
+    description: Used to close a ticket.
+    usage: /close or /close (id) or /close all
+  check:
+    description: Used to check all tickets.
+    usage: /check or /check (ticket id) or /check page (page #)
+  modlist:
+    description: Check which mods are online.
+    usage: /modlist
+  mtreload:
+    description: Reloads the plugins settings.
+    usage: /mtreload
+permissions:
+  monstertickets.help:
+    description: Open a support ticket.
+    default: op
+  monstertickets.claim:
+    description: Allows the mod to claim the ticket.
+    default: op
+  monstertickets.close:
+    description: Allows the mod to close the ticket.
+    default: op
+  monstertickets.check:
+    description: Allows the mod to check all tickets.
+    default: op
+  monstertickets.list:
+    description: Allows the player to view all online mods.
+    default: op
+  monstertickets.reload:
+    description: Allows the mod to reload the plugins settings.
+    default: op
+  monstertickets.mod:
+    description: All the nodes
+    default: op
+    children:
+      monstertickets.help: true
+      monstertickets.claim: true
+      monstertickets.close: true
+      monstertickets.check: true
+      monstertickets.list: true
