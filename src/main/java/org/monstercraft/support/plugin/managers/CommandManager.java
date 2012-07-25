@@ -1,10 +1,12 @@
 package org.monstercraft.support.plugin.managers;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.LinkedList;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.monstercraft.support.MonsterTickets;
 import org.monstercraft.support.plugin.command.GameCommand;
 import org.monstercraft.support.plugin.command.commands.Check;
 import org.monstercraft.support.plugin.command.commands.Claim;
@@ -21,16 +23,19 @@ import org.monstercraft.support.plugin.command.commands.Reload;
  */
 public class CommandManager {
 
-	private Hashtable<Integer, GameCommand> gameCommands = new Hashtable<Integer, GameCommand>();
+	private LinkedList<GameCommand> gameCommands = new LinkedList<GameCommand>();
 
-	public CommandManager() {
+	private final MonsterTickets instance;
+
+	public CommandManager(MonsterTickets instance) {
+		this.instance = instance;
 		try {
-			gameCommands.put(5, new Reload());
-			gameCommands.put(4, new List());
-			gameCommands.put(3, new Check());
-			gameCommands.put(2, new Open());
-			gameCommands.put(1, new Close());
-			gameCommands.put(0, new Claim());
+			gameCommands.add(new Reload(instance));
+			gameCommands.add(new List(instance));
+			gameCommands.add(new Check(instance));
+			gameCommands.add(new Open(instance));
+			gameCommands.add(new Close(instance));
+			gameCommands.add(new Claim(instance));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -56,15 +61,29 @@ public class CommandManager {
 		for (int i = 0; i < args.length; i++) {
 			split[i + 1] = args[i];
 		}
-		for (Enumeration<Integer> e = gameCommands.keys(); e.hasMoreElements();) {
-			int key = e.nextElement();
-			GameCommand c = gameCommands.get(key);
+		for (GameCommand c : gameCommands) {
 			if (c.canExecute(sender, split)) {
-				try {
-					c.execute(sender, split);
-				} catch (Exception ex) {
-					ex.printStackTrace();
+				if (hasPerms(sender, c)) {
+					try {
+						c.execute(sender, split);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				} else {
+					break;
 				}
+			}
+		}
+		return true;
+	}
+
+	private boolean hasPerms(CommandSender sender, GameCommand command) {
+		if (sender instanceof Player) {
+			if (!instance.getPermissionsHandler().hasCommandPerms(
+					((Player) sender), command)) {
+				sender.sendMessage(ChatColor.RED
+						+ "You don't have permission to perform this command.");
+				return false;
 			}
 		}
 		return true;

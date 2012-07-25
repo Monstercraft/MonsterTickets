@@ -51,6 +51,15 @@ public class HelpTicket {
 	public String getModName() {
 		return modname;
 	}
+	
+	public void setStatus(int id) {
+		for(Status status : Status.values()) {
+			if(status.toInt() == id) {
+				this.status = status;
+				return;
+			}
+		}
+	}
 
 	public void Claim(String modname) {
 		this.modname = modname;

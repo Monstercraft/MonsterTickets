@@ -63,6 +63,10 @@ public class SettingsManager {
 		try {
 			config.set("MONSTERTICKETS.OPTIONS.OVERRIDE_HELP_COMMAND",
 					Variables.overridehelp);
+			config.set("MONSTERTICKETS.DB.HOST", Variables.db_host);
+			config.set("MONSTERTICKETS.DB.USERNAME", Variables.db_username);
+			config.set("MONSTERTICKETS.DB.PASSWORD", Variables.db_password);
+			config.set("MONSTERTICKETS.DB.DATABASE", Variables.db_name);
 			save(config, CONFIGURATION_FILE);
 		} catch (Exception e) {
 			Configuration.debug(e);
@@ -95,6 +99,12 @@ public class SettingsManager {
 			Variables.overridehelp = config.getBoolean(
 					"MONSTERTICKETS.OPTIONS.OVERRIDE_HELP_COMMAND",
 					Variables.overridehelp);
+			Variables.db_host = config.getString("MONSTERTICKETS.DB.HOST");
+			Variables.db_username = config
+					.getString("MONSTERTICKETS.DB.USERNAME");
+			Variables.db_password = config
+					.getString("MONSTERTICKETS.DB.PASSWORD");
+			Variables.db_name = config.getString("MONSTERTICKETS.DB.DATABASE");
 			save(config, CONFIGURATION_FILE);
 		} catch (Exception e) {
 			Configuration.debug(e);

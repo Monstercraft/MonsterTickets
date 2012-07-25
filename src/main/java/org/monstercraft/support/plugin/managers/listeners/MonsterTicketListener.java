@@ -25,20 +25,22 @@ import org.monstercraft.support.plugin.wrappers.HelpTicket;
  */
 public class MonsterTicketListener implements Listener {
 
+	private final MonsterTickets plugin;
+
 	/**
 	 * 
 	 * @param plugin
 	 *            The parent plugin for the listener.
 	 */
-	public MonsterTicketListener() {
+	public MonsterTicketListener(MonsterTickets plugin) {
+		this.plugin = plugin;
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onChat(PlayerChatEvent event) {
 		for (HelpTicket t : Variables.tickets) {
 			if (t.getMod() == null || t.getNoob() == null
 					|| t.getStatus().equals(Status.CLOSED)) {
-				Configuration.log(t.getID() + "" + t.getStatus().toString());
 				continue;
 			}
 			if (t.getStatus().equals(Status.CLAIMED)) {
@@ -53,7 +55,7 @@ public class MonsterTicketListener implements Listener {
 									+ event.getPlayer().getDisplayName() + ": "
 									+ ChatColor.WHITE + event.getMessage());
 					for (Player pl : Bukkit.getOnlinePlayers()) {
-						if (MonsterTickets.getPermissionsHandler().hasNode(pl,
+						if (plugin.getPermissionsHandler().hasNode(pl,
 								"monstertickets.mod.spy")
 								&& pl != t.getMod() && pl != t.getNoob()) {
 							pl.sendMessage(ChatColor.DARK_BLUE + "[Spy]"

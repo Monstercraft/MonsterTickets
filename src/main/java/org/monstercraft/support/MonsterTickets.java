@@ -1,34 +1,55 @@
 package org.monstercraft.support;
 
+import java.io.IOException;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.monstercraft.support.plugin.Configuration;
+import org.monstercraft.support.plugin.Configuration.Variables;
+import org.monstercraft.support.plugin.command.commands.Close;
 import org.monstercraft.support.plugin.managers.CommandManager;
 import org.monstercraft.support.plugin.managers.SettingsManager;
 import org.monstercraft.support.plugin.managers.handlers.PermissionsHandler;
 import org.monstercraft.support.plugin.managers.listeners.MonsterTicketListener;
 import org.monstercraft.support.plugin.util.Metrics;
+import org.monstercraft.support.plugin.util.MySQL;
+import org.monstercraft.support.plugin.util.Updater;
 
-public class MonsterTickets extends JavaPlugin implements Runnable {
+public final class MonsterTickets extends JavaPlugin {
 
 	private CommandManager commandManager;
-	private static PermissionsHandler perms = new PermissionsHandler();
-	private static SettingsManager settings = null;
+	private PermissionsHandler perms;
+	private SettingsManager settings;
+	private MySQL mysql;
 
 	public void onEnable() {
 		settings = new SettingsManager(this);
-		commandManager = new CommandManager();
+		commandManager = new CommandManager(this);
+		perms = new PermissionsHandler();
+		try {
+			mysql = new MySQL();
+		} catch (Exception e) {
+			Configuration
+					.log("Error connecting to database! Falling back to file backend!");
+			Variables.useFileBackend = true;
+		}
 		getServer().getPluginManager().registerEvents(
-				new MonsterTicketListener(), this);
+				new MonsterTicketListener(this), this);
 		Configuration.log("MonsterTickets has been enabled!");
-		Thread t = new Thread(this);
-		t.setDaemon(true);
-		t.setPriority(Thread.MAX_PRIORITY);
-		t.start();
+		Configuration.log("Setting up metrics!");
+		try {
+			new Metrics(this).start();
+		} catch (IOException e) {
+		}
+		this.getServer()
+				.getScheduler()
+				.scheduleAsyncDelayedTask(this,
+						new Updater(this.getDescription().getVersion()));
 	}
 
 	public void onDisable() {
+		Close.closeAll(null);
 		settings.save();
 		settings.saveTicketsConfig();
 		Configuration.log("MonsterTickets has been disabled.");
@@ -39,33 +60,16 @@ public class MonsterTickets extends JavaPlugin implements Runnable {
 		return commandManager.onGameCommand(sender, command, label, args);
 	}
 
-	public static PermissionsHandler getPermissionsHandler() {
+	public PermissionsHandler getPermissionsHandler() {
 		return perms;
 	}
 
-	public static SettingsManager getSettingsManager() {
+	public SettingsManager getSettingsManager() {
 		return settings;
 	}
 
-	public void run() {
-		try {
-			Configuration.log("Setting up metrics!");
-			Metrics metrics = new Metrics(this);
-			metrics.start();
-			String newVersion = Configuration.checkForUpdates(this,
-					Configuration.URLS.UPDATE_URL);
-			if (!newVersion.contains(Configuration.getCurrentVerison(this))) {
-				Configuration.log(newVersion + " is out! You are running "
-						+ Configuration.getCurrentVerison(this));
-				Configuration
-						.log("Update MonsterTickets at: http://dev.bukkit.org/server-mods/monstertickets");
-			} else {
-				Configuration
-						.log("You are using the latest version of MonsterTickets.");
-			}
-		} catch (Exception e) {
-			Configuration.debug(e);
-		}
+	public MySQL getMySQL() {
+		return mysql;
 	}
 
 }

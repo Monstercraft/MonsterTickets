@@ -11,6 +11,12 @@ import org.monstercraft.support.plugin.util.Status;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
 public class Check extends GameCommand {
+	
+	//private static MonsterTickets instance;
+
+	public Check(MonsterTickets instance) {
+		//Check.instance = instance;
+	}
 
 	private boolean show_closed = false;
 
@@ -21,15 +27,6 @@ public class Check extends GameCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
-		if (sender instanceof Player) {
-			if (sender instanceof Player) {
-				if (!MonsterTickets.getPermissionsHandler().hasCommandPerms(
-						((Player) sender), this)) {
-					sender.sendMessage("You don't have permission to preform this command.");
-					return true;
-				}
-			}
-		}
 		for (String s : split) {
 			if (s.equalsIgnoreCase("-closed")) {
 				show_closed = true;

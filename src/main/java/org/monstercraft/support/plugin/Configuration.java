@@ -113,6 +113,12 @@ public class Configuration {
 
 		public static LinkedList<HelpTicket> tickets = new LinkedList<HelpTicket>();
 		public static boolean overridehelp = false;
+		public static boolean useFileBackend = true;
+		public static String db_host;
+		public static String db_username;
+		public static String db_password;
+		public static String db_name;
 
 	}
+
 }

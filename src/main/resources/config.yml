@@ -1,3 +1,8 @@
 MONSTERTICKETS:
     OPTIONS:
         OVERRIDE_HELP_COMMAND: false
+    DB:
+        HOST: 'localhost'
+        DATABASE: 'minecraft'
+        USERNAME: 'username'
+        PASSWORD: 'password'

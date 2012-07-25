@@ -1,5 +1,7 @@
 package org.monstercraft.support.plugin.command.commands;
 
+import java.sql.SQLException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +14,12 @@ import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
 public class Open extends GameCommand {
 
+	private static MonsterTickets instance;
+
+	public Open(MonsterTickets instance) {
+		Open.instance = instance;
+	}
+
 	@Override
 	public boolean canExecute(CommandSender sender, String[] split) {
 		return split[0].equalsIgnoreCase("request");
@@ -19,15 +27,7 @@ public class Open extends GameCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
-		if (sender instanceof Player) {
-			if (sender instanceof Player) {
-				if (!MonsterTickets.getPermissionsHandler().hasCommandPerms(
-						((Player) sender), this)) {
-					sender.sendMessage("You don't have permission to preform this command.");
-					return true;
-				}
-			}
-		} else {
+		if (!(sender instanceof Player)) {
 			sender.sendMessage("You must be ingame to open a ticket!");
 			return true;
 		}
@@ -71,9 +71,9 @@ public class Open extends GameCommand {
 			id = 1;
 		}
 		HelpTicket t = new HelpTicket(id, desc.toString().trim()
-				.replace("|", "").replace("=", ""), sender.getName());
+				.replace("|", ""), sender.getName());
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (MonsterTickets.getPermissionsHandler().hasNode(p,
+			if (instance.getPermissionsHandler().hasNode(p,
 					"monstertickets.mod")) {
 				p.sendMessage(ChatColor.GREEN + sender.getName()
 						+ " opened ticket " + t.getID());
@@ -83,6 +83,11 @@ public class Open extends GameCommand {
 		sender.sendMessage(ChatColor.GREEN + "" + t.getID() + " - "
 				+ t.getNoobName() + " - " + t.getDescription());
 		Variables.tickets.add(t);
+		try {
+			instance.getMySQL().createTicket(t);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return true;
 	}
 

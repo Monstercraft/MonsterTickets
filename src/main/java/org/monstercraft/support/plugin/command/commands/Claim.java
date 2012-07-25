@@ -1,5 +1,7 @@
 package org.monstercraft.support.plugin.command.commands;
 
+import java.sql.SQLException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +14,12 @@ import org.monstercraft.support.plugin.util.Status;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
 public class Claim extends GameCommand {
+	
+	private static MonsterTickets instance;
+
+	public Claim(MonsterTickets instance) {
+		Claim.instance = instance;
+	}
 
 	@Override
 	public boolean canExecute(CommandSender sender, String[] split) {
@@ -20,15 +28,7 @@ public class Claim extends GameCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
-		if (sender instanceof Player) {
-			if (sender instanceof Player) {
-				if (!MonsterTickets.getPermissionsHandler().hasCommandPerms(
-						((Player) sender), this)) {
-					sender.sendMessage("You don't have permission to preform this command.");
-					return true;
-				}
-			}
-		} else {
+		if (!(sender instanceof Player)) {
 			sender.sendMessage("You must be ingame to claim a ticket!");
 			return true;
 		}
@@ -67,13 +67,18 @@ public class Claim extends GameCommand {
 					return true;
 				}
 				for (Player p : Bukkit.getOnlinePlayers()) {
-					if (MonsterTickets.getPermissionsHandler().hasNode(p,
+					if (instance.getPermissionsHandler().hasNode(p,
 							"monstertickets.mod")) {
 						p.sendMessage(ChatColor.GREEN + sender.getName()
 								+ " is now handeling ticket " + t.getID());
 					}
 				}
 				t.Claim(((Player) sender).getName());
+				try {
+					instance.getMySQL().claimTicket(t);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 				sender.sendMessage(ChatColor.GREEN + "Ticket " + t.getID()
 						+ " sucessfully claimed.");
 				noob.sendMessage(ChatColor.GREEN

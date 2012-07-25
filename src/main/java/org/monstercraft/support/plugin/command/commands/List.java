@@ -8,6 +8,12 @@ import org.monstercraft.support.MonsterTickets;
 import org.monstercraft.support.plugin.command.GameCommand;
 
 public class List extends GameCommand {
+	
+	private static MonsterTickets instance;
+
+	public List(MonsterTickets instance) {
+		List.instance = instance;
+	}
 
 	@Override
 	public boolean canExecute(CommandSender sender, String[] split) {
@@ -16,20 +22,11 @@ public class List extends GameCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
-		if (sender instanceof Player) {
-			if (sender instanceof Player) {
-				if (!MonsterTickets.getPermissionsHandler().hasCommandPerms(
-						((Player) sender), this)) {
-					sender.sendMessage("You don't have permission to preform this command.");
-					return true;
-				}
-			}
-		}
 		int i = 1;
 		sender.sendMessage(ChatColor.RED + "Listing all online Mods");
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (MonsterTickets.getPermissionsHandler().hasNode(p,
-					"monstertickets.mod")) {
+			if (instance.getPermissionsHandler()
+					.hasNode(p, "monstertickets.mod")) {
 				sender.sendMessage(ChatColor.GREEN + "" + i + ". "
 						+ p.getName());
 				i++;
