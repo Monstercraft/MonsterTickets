@@ -38,6 +38,7 @@ public class MonsterTicketListener implements Listener {
 		for (HelpTicket t : Variables.tickets) {
 			if (t.getMod() == null || t.getNoob() == null
 					|| t.getStatus().equals(Status.CLOSED)) {
+				Configuration.log(t.getID() + "" + t.getStatus().toString());
 				continue;
 			}
 			if (t.getStatus().equals(Status.CLAIMED)) {

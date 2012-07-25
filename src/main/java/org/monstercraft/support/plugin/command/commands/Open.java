@@ -45,6 +45,15 @@ public class Open extends GameCommand {
 				return true;
 			}
 		}
+		for (HelpTicket t : Variables.tickets) {
+			if (t.getStatus().equals(Status.CLAIMED)) {
+				if (t.getMod().equals((Player) sender)) {
+					sender.sendMessage(ChatColor.GREEN
+							+ "You are already supporting someone! You can't open a ticket!");
+					return true;
+				}
+			}
+		}
 		if (split.length < 2) {
 			sender.sendMessage(ChatColor.RED
 					+ "Invalid description of problem.");
