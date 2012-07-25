@@ -35,17 +35,13 @@ public class MySQL {
 					+ "  PRIMARY KEY (`id`)"
 					+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 			this.connection.createStatement().executeUpdate(tableCreation);
-			Variables.tickets.addAll(readTickets(false));
+			Variables.tickets.addAll(readTickets());
 		}
 	}
 
-	public ArrayList<HelpTicket> readTickets(boolean returnClosed)
-			throws SQLException {
-		PreparedStatement ps = this.connection
-				.prepareStatement("SELECT * FROM tickets WHERE status != 3");
-		if (returnClosed) {
-			ps = this.connection.prepareStatement("SELECT * FROM tickets");
-		}
+	public ArrayList<HelpTicket> readTickets() throws SQLException {
+		PreparedStatement ps = connection
+				.prepareStatement("SELECT * FROM tickets");
 		ResultSet rs = ps.executeQuery();
 		ArrayList<HelpTicket> tickets = new ArrayList<HelpTicket>();
 		while (rs.next()) {
@@ -58,7 +54,7 @@ public class MySQL {
 			String world = rs.getString("world");
 			String mod = rs.getString("helper");
 			HelpTicket h = new HelpTicket(id, noob, description, x, y, z, world);
-			if (returnClosed && mod != null) {
+			if (mod != null) {
 				h.Claim(mod);
 				h.close();
 			}

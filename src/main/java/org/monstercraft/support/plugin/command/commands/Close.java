@@ -130,14 +130,21 @@ public class Close extends GameCommand {
 				}
 			}
 		}
-		if (sender != null) {
-			for (Player pl : Bukkit.getOnlinePlayers()) {
-				if (instance.getPermissionsHandler().hasNode(pl,
-						"monstertickets.mod")) {
-					pl.sendMessage(ChatColor.GREEN
-							+ "All support tickets have been closed by "
-							+ sender.getName() + ".");
-				}
+		for (Player pl : Bukkit.getOnlinePlayers()) {
+			if (instance.getPermissionsHandler().hasNode(pl,
+					"monstertickets.mod")) {
+				pl.sendMessage(ChatColor.GREEN
+						+ "All support tickets have been closed by "
+						+ sender.getName() + ".");
+			}
+		}
+	}
+
+	public static void closeClaimed() {
+		for (HelpTicket t : Variables.tickets) {
+			if (t.getStatus().equals(Status.CLAIMED)) {
+				t.close();
+				sendToDB(t);
 			}
 		}
 	}

@@ -50,7 +50,7 @@ public final class MonsterTickets extends JavaPlugin {
 	}
 
 	public void onDisable() {
-		Close.closeAll(null);
+		Close.closeClaimed();
 		settings.save();
 		if (!Variables.useMYSQLBackend) {
 			settings.saveTicketsConfig();
