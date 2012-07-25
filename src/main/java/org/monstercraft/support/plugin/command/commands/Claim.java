@@ -42,7 +42,8 @@ public class Claim extends GameCommand {
 		}
 		for (HelpTicket t : Variables.tickets) {
 			if (t.getStatus().equals(Status.CLAIMED)) {
-				if (t.getMod().equals((Player) sender)) {
+				if (t.getModName()
+						.equalsIgnoreCase(((Player) sender).getName())) {
 					sender.sendMessage(ChatColor.GREEN
 							+ "You are already supporting someone!");
 					return true;
@@ -60,7 +61,7 @@ public class Claim extends GameCommand {
 				continue;
 			}
 			if (t.getID() == Integer.parseInt(split[1])) {
-				Player noob = t.getNoob();
+				Player noob = Bukkit.getPlayer(t.getNoobName());
 				if (noob == null) {
 					sender.sendMessage(ChatColor.RED
 							+ "Player not online, unable to claim the ticket");

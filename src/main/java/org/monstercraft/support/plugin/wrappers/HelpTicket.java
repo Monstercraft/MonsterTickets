@@ -1,9 +1,6 @@
 package org.monstercraft.support.plugin.wrappers;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.monstercraft.support.plugin.util.Status;
 
 public class HelpTicket {
@@ -62,16 +59,8 @@ public class HelpTicket {
 		return status;
 	}
 
-	public Player getNoob() {
-		return Bukkit.getPlayer(getNoobName());
-	}
-
 	public String getNoobName() {
 		return noobname;
-	}
-
-	public Player getMod() {
-		return Bukkit.getPlayer(getModName());
 	}
 
 	public String getModName() {
@@ -89,9 +78,9 @@ public class HelpTicket {
 	public int getZ() {
 		return z;
 	}
-
-	public World getWorld() {
-		return Bukkit.getWorld(worldname);
+	
+	public String getWorldName() {
+		return worldname;
 	}
 
 	public void Claim(String modname) {
@@ -101,10 +90,6 @@ public class HelpTicket {
 
 	public void close() {
 		this.status = Status.CLOSED;
-	}
-
-	public String getWorldName() {
-		return worldname;
 	}
 
 }

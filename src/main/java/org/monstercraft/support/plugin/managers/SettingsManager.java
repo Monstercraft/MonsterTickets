@@ -184,7 +184,7 @@ public class SettingsManager {
 		config.options().header("DO NOT MODIFY");
 		for (HelpTicket t : Variables.tickets) {
 			if (t.getStatus().equals(Status.CLAIMED)) {
-				Close.close(t.getMod());
+				Close.close(t.getModName());
 			}
 			tickets.add(t.getID()
 					+ "|"
@@ -193,8 +193,8 @@ public class SettingsManager {
 					+ t.getDescription()
 					+ "|"
 					+ (t.getStatus().equals(Status.CLOSED) ? t.getModName()
-							: "nullnullnullnullnull") + "|" + t.getX() + "|" + t.getY() + "|"
-					+ t.getZ() + "|" + t.getWorldName());
+							: "nullnullnullnullnull") + "|" + t.getX() + "|"
+					+ t.getY() + "|" + t.getZ() + "|" + t.getWorldName());
 
 		}
 		if (!tickets.isEmpty()) {

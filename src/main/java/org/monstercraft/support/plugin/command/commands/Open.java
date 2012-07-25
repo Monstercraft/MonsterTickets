@@ -47,7 +47,8 @@ public class Open extends GameCommand {
 		}
 		for (HelpTicket t : Variables.tickets) {
 			if (t.getStatus().equals(Status.CLAIMED)) {
-				if (t.getMod().equals((Player) sender)) {
+				if (t.getModName()
+						.equalsIgnoreCase(((Player) sender).getName())) {
 					sender.sendMessage(ChatColor.GREEN
 							+ "You are already supporting someone! You can't open a ticket!");
 					return true;

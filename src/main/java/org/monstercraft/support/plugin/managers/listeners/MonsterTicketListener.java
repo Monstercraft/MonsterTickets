@@ -39,25 +39,25 @@ public class MonsterTicketListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onChat(PlayerChatEvent event) {
 		for (HelpTicket t : Variables.tickets) {
-			if (t.getMod() == null || t.getNoob() == null
+			Player mod = Bukkit.getPlayer(t.getModName());
+			Player noob = Bukkit.getPlayer(t.getNoobName());
+			if (mod == null || noob == null
 					|| t.getStatus().equals(Status.CLOSED)) {
 				continue;
 			}
 			if (t.getStatus().equals(Status.CLAIMED)) {
-				if (t.getNoob().equals(event.getPlayer())
-						|| t.getMod().equals(event.getPlayer())) {
-					t.getNoob().sendMessage(
-							ChatColor.RED + "[Support] "
-									+ event.getPlayer().getDisplayName() + ": "
-									+ ChatColor.WHITE + event.getMessage());
-					t.getMod().sendMessage(
-							ChatColor.RED + "[Support] "
-									+ event.getPlayer().getDisplayName() + ": "
-									+ ChatColor.WHITE + event.getMessage());
+				if (noob.equals(event.getPlayer())
+						|| mod.equals(event.getPlayer())) {
+					noob.sendMessage(ChatColor.RED + "[Support] "
+							+ event.getPlayer().getDisplayName() + ": "
+							+ ChatColor.WHITE + event.getMessage());
+					mod.sendMessage(ChatColor.RED + "[Support] "
+							+ event.getPlayer().getDisplayName() + ": "
+							+ ChatColor.WHITE + event.getMessage());
 					for (Player pl : Bukkit.getOnlinePlayers()) {
 						if (plugin.getPermissionsHandler().hasNode(pl,
 								"monstertickets.mod.spy")
-								&& pl != t.getMod() && pl != t.getNoob()) {
+								&& pl != mod && pl != noob) {
 							pl.sendMessage(ChatColor.DARK_BLUE + "[Spy]"
 									+ ChatColor.RED + "[Support] "
 									+ event.getPlayer().getDisplayName() + ": "
@@ -101,10 +101,11 @@ public class MonsterTicketListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		for (HelpTicket t : Variables.tickets) {
-			if (t.getMod().equals(event.getPlayer())
-					|| t.getNoob().equals(event.getPlayer())) {
+			if (t.getModName().equalsIgnoreCase(event.getPlayer().getName())
+					|| t.getNoobName().equalsIgnoreCase(
+							event.getPlayer().getName())) {
 				if (t.getStatus().equals(Status.CLAIMED)) {
-					Close.close(t.getMod());
+					Close.close(t.getModName());
 					return;
 				}
 			}

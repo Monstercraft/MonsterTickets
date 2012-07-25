@@ -43,7 +43,7 @@ public class Close extends GameCommand {
 			}
 		}
 		if (sender instanceof Player) {
-			close((Player) sender);
+			close(((Player) sender).getName());
 			return true;
 		}
 		sender.sendMessage(ChatColor.GREEN
@@ -56,29 +56,29 @@ public class Close extends GameCommand {
 		return "monstertickets.close";
 	}
 
-	public static void close(Player mod) {
-		if (mod == null) {
-			return;
-		}
+	public static void close(String modname) {
+		Player mod = Bukkit.getPlayer(modname);
 		for (HelpTicket t : Variables.tickets) {
 			if (t.getStatus().equals(Status.CLOSED)) {
 				continue;
 			}
-			if (t.getMod() == mod) {
+			if (t.getModName().equalsIgnoreCase(modname)) {
 				t.close();
 				sendToDB(t);
-				Player p = t.getNoob();
+				Player p = Bukkit.getPlayer(t.getNoobName());
 				if (p != null) {
 					p.sendMessage(ChatColor.GREEN
 							+ "Your support ticket has been closed.");
 				}
-				mod.sendMessage(ChatColor.GREEN + "Ticket " + t.getID()
-						+ " sucessfully closed.");
-				for (Player pl : Bukkit.getOnlinePlayers()) {
-					if (instance.getPermissionsHandler().hasNode(pl,
-							"monstertickets.mod")) {
-						pl.sendMessage(ChatColor.GREEN + mod.getName()
-								+ " closed ticket " + t.getID());
+				if (mod != null) {
+					mod.sendMessage(ChatColor.GREEN + "Ticket " + t.getID()
+							+ " sucessfully closed.");
+					for (Player pl : Bukkit.getOnlinePlayers()) {
+						if (instance.getPermissionsHandler().hasNode(pl,
+								"monstertickets.mod")) {
+							pl.sendMessage(ChatColor.GREEN + mod.getName()
+									+ " closed ticket " + t.getID());
+						}
 					}
 				}
 				return;
@@ -98,7 +98,7 @@ public class Close extends GameCommand {
 				}
 				t.close();
 				sendToDB(t);
-				Player p = t.getNoob();
+				Player p = Bukkit.getPlayer(t.getNoobName());
 				if (p != null) {
 					p.sendMessage(ChatColor.GREEN
 							+ "Your support ticket has been closed.");
@@ -123,7 +123,7 @@ public class Close extends GameCommand {
 			if (!t.getStatus().equals(Status.CLOSED)) {
 				t.close();
 				sendToDB(t);
-				Player p = t.getNoob();
+				Player p = Bukkit.getPlayer(t.getNoobName());
 				if (p != null) {
 					p.sendMessage(ChatColor.GREEN
 							+ "Your support ticket has been forced closed, if this was a mistake please create a new ticket.");
