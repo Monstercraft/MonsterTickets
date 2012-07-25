@@ -130,24 +130,27 @@ public class SettingsManager {
 							count++;
 						}
 					}
-					int idx1 = str.indexOf("|");
-					int idx2 = str.indexOf("|", idx1);
-					if (count == 3) {
-						int id = Integer.parseInt(str.substring(0, idx1));
-						String player = str.substring(idx1 + 1, idx2);
-						String description = str.substring(idx2 + 1);
-						Variables.tickets.add(new HelpTicket(id, description,
-								player));
-					} else if (count == 4) {
-						int idx3 = str.indexOf("|", idx2);
-						int id = Integer.parseInt(str.substring(0, idx1));
-						String player = str.substring(idx1 + 1, idx2);
-						String description = str.substring(idx2 + 1, idx3);
-						String modname = str.substring(idx3 + 1);
-						HelpTicket t = new HelpTicket(id, description, player);
-						Variables.tickets.add(t);
-						Variables.tickets.getLast().Claim(modname);
-						Variables.tickets.getLast().close();
+					if (count > 0) {
+						int idx1 = str.indexOf("|");
+						int idx2 = str.indexOf("|", idx1);
+						if (count == 3) {
+							int id = Integer.parseInt(str.substring(0, idx1));
+							String player = str.substring(idx1 + 1, idx2);
+							String description = str.substring(idx2 + 1);
+							Variables.tickets.add(new HelpTicket(id,
+									description, player));
+						} else if (count == 4) {
+							int idx3 = str.indexOf("|", idx2);
+							int id = Integer.parseInt(str.substring(0, idx1));
+							String player = str.substring(idx1 + 1, idx2);
+							String description = str.substring(idx2 + 1, idx3);
+							String modname = str.substring(idx3 + 1);
+							HelpTicket t = new HelpTicket(id, description,
+									player);
+							Variables.tickets.add(t);
+							Variables.tickets.getLast().Claim(modname);
+							Variables.tickets.getLast().close();
+						}
 					}
 				}
 			}
