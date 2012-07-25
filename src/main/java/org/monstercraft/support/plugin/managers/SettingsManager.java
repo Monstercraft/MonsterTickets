@@ -42,7 +42,9 @@ public class SettingsManager {
 		this.plugin = plugin;
 		this.SETTINGS_PATH = plugin.getDataFolder().getAbsolutePath();
 		load();
-		loadTicketsConfig();
+		if (!Variables.useMYSQLBackend) {
+			loadTickets();
+		}
 	}
 
 	private void save(final FileConfiguration config, final File file) {
@@ -116,7 +118,7 @@ public class SettingsManager {
 		}
 	}
 
-	private void loadTicketsConfig() {
+	public void loadTickets() {
 		File TICKETS_FILE = new File(SETTINGS_PATH, "Tickets.dat");
 		if (!TICKETS_FILE.exists()) {
 			return;
@@ -145,24 +147,26 @@ public class SettingsManager {
 							count++;
 						}
 					}
-					if (count > 0) {
+					if (count == 5) {
 						int idx1 = str.indexOf("|");
 						int idx2 = str.indexOf("|", idx1 + 1);
-						if (count == 2) {
-							int id = Integer.parseInt(str.substring(0, idx1));
-							String player = str.substring(idx1 + 1, idx2);
-							String description = str.substring(idx2 + 1);
-							Variables.tickets.add(new HelpTicket(id,
-									description, player));
-						} else if (count == 3) {
-							int idx3 = str.indexOf("|", idx2 + 1);
-							int id = Integer.parseInt(str.substring(0, idx1));
-							String player = str.substring(idx1 + 1, idx2);
-							String description = str.substring(idx2 + 1, idx3);
-							String modname = str.substring(idx3 + 1);
-							HelpTicket t = new HelpTicket(id, description,
-									player);
-							Variables.tickets.add(t);
+						int idx3 = str.indexOf("|", idx2 + 1);
+						int idx4 = str.indexOf("|", idx3 + 1);
+						int idx5 = str.indexOf("|", idx4 + 1);
+						int idx6 = str.indexOf("|", idx5 + 1);
+						int idx7 = str.indexOf("|", idx6 + 1);
+						int id = Integer.parseInt(str.substring(0, idx1));
+						String player = str.substring(idx1 + 1, idx2);
+						String description = str.substring(idx2 + 1, idx3);
+						String modname = str.substring(idx3 + 1, idx4);
+						int x = Integer.parseInt(str.substring(idx4 + 1, idx5));
+						int y = Integer.parseInt(str.substring(idx5 + 1, idx6));
+						int z = Integer.parseInt(str.substring(idx6 + 1, idx7));
+						String world = str.substring(idx7 + 1).trim();
+						HelpTicket t = new HelpTicket(id, description, player,
+								x, y, z, world);
+						Variables.tickets.add(t);
+						if (!modname.equalsIgnoreCase("nullnullnullnullnull")) {
 							Variables.tickets.getLast().Claim(modname);
 							Variables.tickets.getLast().close();
 						}
@@ -179,16 +183,18 @@ public class SettingsManager {
 		FileConfiguration config = new YamlConfiguration();
 		config.options().header("DO NOT MODIFY");
 		for (HelpTicket t : Variables.tickets) {
-			if (t.getStatus().equals(Status.OPEN)) {
-				tickets.add(t.getID() + "|" + t.getNoobName() + "|"
-						+ t.getDescription());
-			} else if (t.getStatus().equals(Status.CLAIMED)) {
+			if (t.getStatus().equals(Status.CLAIMED)) {
 				Close.close(t.getMod());
 			}
-			if (t.getStatus().equals(Status.CLOSED)) {
-				tickets.add(t.getID() + "|" + t.getNoobName() + "|"
-						+ t.getDescription() + "|" + t.getModName());
-			}
+			tickets.add(t.getID()
+					+ "|"
+					+ t.getNoobName()
+					+ "|"
+					+ t.getDescription()
+					+ "|"
+					+ (t.getStatus().equals(Status.CLOSED) ? t.getModName()
+							: "nullnullnullnullnull") + "|" + t.getX() + "|" + t.getY() + "|"
+					+ t.getZ() + "|" + t.getWorldName());
 
 		}
 		if (!tickets.isEmpty()) {

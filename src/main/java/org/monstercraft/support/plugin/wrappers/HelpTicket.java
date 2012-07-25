@@ -1,6 +1,8 @@
 package org.monstercraft.support.plugin.wrappers;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.monstercraft.support.plugin.util.Status;
 
@@ -16,12 +18,36 @@ public class HelpTicket {
 
 	private String modname;
 
+	private int x;
+
+	private int y;
+
+	private int z;
+
+	private String worldname;
+
 	public HelpTicket(final int id, final String description,
-			final String player) {
+			final String player, Location location) {
 		this.id = id;
 		this.description = description;
 		this.status = Status.OPEN;
 		this.noobname = player;
+		this.x = (int) location.getX();
+		this.y = (int) location.getY();
+		this.z = (int) location.getZ();
+		this.worldname = location.getWorld().getName();
+	}
+	
+	public HelpTicket(final int id, final String description,
+			final String player, int x, int y, int z, String worldname) {
+		this.id = id;
+		this.description = description;
+		this.status = Status.OPEN;
+		this.noobname = player;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.worldname = worldname;
 	}
 
 	public String getDescription() {
@@ -51,14 +77,21 @@ public class HelpTicket {
 	public String getModName() {
 		return modname;
 	}
-	
-	public void setStatus(int id) {
-		for(Status status : Status.values()) {
-			if(status.toInt() == id) {
-				this.status = status;
-				return;
-			}
-		}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public int getZ() {
+		return z;
+	}
+
+	public World getWorld() {
+		return Bukkit.getWorld(worldname);
 	}
 
 	public void Claim(String modname) {
@@ -68,6 +101,10 @@ public class HelpTicket {
 
 	public void close() {
 		this.status = Status.CLOSED;
+	}
+
+	public String getWorldName() {
+		return worldname;
 	}
 
 }

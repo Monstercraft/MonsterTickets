@@ -66,11 +66,7 @@ public class Close extends GameCommand {
 			}
 			if (t.getMod() == mod) {
 				t.close();
-				try {
-					instance.getMySQL().closeTicket(t);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				sendToDB(t);
 				Player p = t.getNoob();
 				if (p != null) {
 					p.sendMessage(ChatColor.GREEN
@@ -101,11 +97,7 @@ public class Close extends GameCommand {
 					return;
 				}
 				t.close();
-				try {
-					instance.getMySQL().closeTicket(t);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				sendToDB(t);
 				Player p = t.getNoob();
 				if (p != null) {
 					p.sendMessage(ChatColor.GREEN
@@ -128,16 +120,14 @@ public class Close extends GameCommand {
 
 	public static void closeAll(CommandSender sender) {
 		for (HelpTicket t : Variables.tickets) {
-			t.close();
-			try {
-				instance.getMySQL().closeTicket(t);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			Player p = t.getNoob();
-			if (p != null) {
-				p.sendMessage(ChatColor.GREEN
-						+ "Your support ticket has been forced closed, if this was a mistake please create a new ticket.");
+			if (!t.getStatus().equals(Status.CLOSED)) {
+				t.close();
+				sendToDB(t);
+				Player p = t.getNoob();
+				if (p != null) {
+					p.sendMessage(ChatColor.GREEN
+							+ "Your support ticket has been forced closed, if this was a mistake please create a new ticket.");
+				}
 			}
 		}
 		if (sender != null) {
@@ -148,6 +138,16 @@ public class Close extends GameCommand {
 							+ "All support tickets have been closed by "
 							+ sender.getName() + ".");
 				}
+			}
+		}
+	}
+
+	private static void sendToDB(HelpTicket t) {
+		if (Variables.useMYSQLBackend) {
+			try {
+				instance.getMySQL().closeTicket(t);
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 	}

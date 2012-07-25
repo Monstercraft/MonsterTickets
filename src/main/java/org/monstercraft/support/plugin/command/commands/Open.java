@@ -71,7 +71,8 @@ public class Open extends GameCommand {
 			id = 1;
 		}
 		HelpTicket t = new HelpTicket(id, desc.toString().trim()
-				.replace("|", ""), sender.getName());
+				.replace("|", ""), sender.getName(),
+				((Player) sender).getLocation());
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			if (instance.getPermissionsHandler().hasNode(p,
 					"monstertickets.mod")) {
@@ -83,10 +84,12 @@ public class Open extends GameCommand {
 		sender.sendMessage(ChatColor.GREEN + "" + t.getID() + " - "
 				+ t.getNoobName() + " - " + t.getDescription());
 		Variables.tickets.add(t);
-		try {
-			instance.getMySQL().createTicket(t);
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if (Variables.useMYSQLBackend) {
+			try {
+				instance.getMySQL().createTicket(t);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return true;
 	}

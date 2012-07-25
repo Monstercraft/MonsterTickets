@@ -14,7 +14,7 @@ import org.monstercraft.support.plugin.util.Status;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
 public class Claim extends GameCommand {
-	
+
 	private static MonsterTickets instance;
 
 	public Claim(MonsterTickets instance) {
@@ -74,10 +74,12 @@ public class Claim extends GameCommand {
 					}
 				}
 				t.Claim(((Player) sender).getName());
-				try {
-					instance.getMySQL().claimTicket(t);
-				} catch (SQLException e) {
-					e.printStackTrace();
+				if (Variables.useMYSQLBackend) {
+					try {
+						instance.getMySQL().claimTicket(t);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 				sender.sendMessage(ChatColor.GREEN + "Ticket " + t.getID()
 						+ " sucessfully claimed.");

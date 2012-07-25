@@ -33,6 +33,7 @@ public final class MonsterTickets extends JavaPlugin {
 			Configuration
 					.log("Error connecting to database! Falling back to file backend!");
 			Variables.useMYSQLBackend = false;
+			settings.loadTickets();
 		}
 		getServer().getPluginManager().registerEvents(
 				new MonsterTicketListener(this), this);
@@ -51,7 +52,9 @@ public final class MonsterTickets extends JavaPlugin {
 	public void onDisable() {
 		Close.closeAll(null);
 		settings.save();
-		settings.saveTicketsConfig();
+		if (!Variables.useMYSQLBackend) {
+			settings.saveTicketsConfig();
+		}
 		Configuration.log("MonsterTickets has been disabled.");
 	}
 

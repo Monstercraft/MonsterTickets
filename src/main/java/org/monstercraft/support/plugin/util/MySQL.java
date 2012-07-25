@@ -24,33 +24,44 @@ public class MySQL {
 				null, "tickets", null);
 		if (!tableExists.first()) {
 			String tableCreation = "CREATE TABLE IF NOT EXISTS `tickets` ("
-					+ "  `id` int(11) NOT NULL AUTO_INCREMENT,"
-					+ "  `noob` varchar(16) NOT NULL,"
+					+ "  `id` int(11) NOT NULL,"
+					+ "  `player` varchar(16) NOT NULL,"
 					+ "  `description` text NOT NULL,"
-					+ "  `mod` varchar(16) NOT NULL,"
+					+ "  `helper` varchar(16) DEFAULT NULL,"
 					+ "  `status` tinyint(1) NOT NULL,"
+					+ "  `x` int(11) NOT NULL," + "  `y` int(11) NOT NULL,"
+					+ "  `z` int(11) NOT NULL,"
+					+ "  `world` varchar(16) NOT NULL,"
 					+ "  PRIMARY KEY (`id`)"
-					+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+					+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 			this.connection.createStatement().executeUpdate(tableCreation);
+			Variables.tickets.addAll(readTickets(false));
 		}
 	}
-	
-	public ArrayList<HelpTicket> readTickets(boolean returnClosed) throws SQLException {
+
+	public ArrayList<HelpTicket> readTickets(boolean returnClosed)
+			throws SQLException {
 		PreparedStatement ps = this.connection
 				.prepareStatement("SELECT * FROM tickets WHERE status != 3");
-		if(returnClosed){
-		ps = this.connection
-				.prepareStatement("SELECT * FROM tickets");
+		if (returnClosed) {
+			ps = this.connection.prepareStatement("SELECT * FROM tickets");
 		}
 		ResultSet rs = ps.executeQuery();
 		ArrayList<HelpTicket> tickets = new ArrayList<HelpTicket>();
 		while (rs.next()) {
-			String noob = rs.getString("noob");
+			String noob = rs.getString("player");
 			String description = rs.getString("description");
-			int status = rs.getInt("status");
 			int id = rs.getInt("id");
-			HelpTicket h = new HelpTicket(id, noob, description);
-			h.setStatus(status);
+			int x = rs.getInt("x");
+			int y = rs.getInt("y");
+			int z = rs.getInt("z");
+			String world = rs.getString("world");
+			String mod = rs.getString("helper");
+			HelpTicket h = new HelpTicket(id, noob, description, x, y, z, world);
+			if (returnClosed && mod != null) {
+				h.Claim(mod);
+				h.close();
+			}
 			tickets.add(h);
 		}
 		return tickets;
@@ -58,22 +69,27 @@ public class MySQL {
 
 	public void createTicket(HelpTicket ticket) throws SQLException {
 		PreparedStatement ps = this.connection
-				.prepareStatement("INSERT INTO `tickets` (noob, description, status) VALUES (?,?,?)");
-		ps.setString(1, ticket.getNoobName());
-		ps.setString(2, ticket.getDescription());
-		ps.setInt(3, ticket.getStatus().toInt());
+				.prepareStatement("INSERT INTO `tickets` (id, player, description, status, x, y, z, world) VALUES (?,?,?,?,?,?,?,?)");
+		ps.setInt(1, ticket.getID());
+		ps.setString(2, ticket.getNoobName());
+		ps.setString(3, ticket.getDescription());
+		ps.setInt(4, ticket.getStatus().toInt());
+		ps.setInt(5, ticket.getX());
+		ps.setInt(6, ticket.getY());
+		ps.setInt(7, ticket.getZ());
+		ps.setString(8, ticket.getWorldName());
 		ps.executeUpdate();
 	}
-	
+
 	public void claimTicket(HelpTicket ticket) throws SQLException {
 		PreparedStatement ps = this.connection
-				.prepareStatement("UPDATE `tickets` SET mod=?,status=? WHERE id=?");
+				.prepareStatement("UPDATE `tickets` SET helper=?,status=? WHERE id=?");
 		ps.setString(1, ticket.getModName());
 		ps.setInt(2, ticket.getStatus().toInt());
 		ps.setInt(3, ticket.getID());
 		ps.executeUpdate();
 	}
-	
+
 	public void closeTicket(HelpTicket ticket) throws SQLException {
 		PreparedStatement ps = this.connection
 				.prepareStatement("UPDATE `tickets` SET status=? WHERE id=?");
