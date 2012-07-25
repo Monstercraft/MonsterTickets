@@ -27,13 +27,16 @@ public final class MonsterTickets extends JavaPlugin {
 		settings = new SettingsManager(this);
 		commandManager = new CommandManager(this);
 		perms = new PermissionsHandler();
-		try {
-			mysql = new MySQL();
-		} catch (Exception e) {
-			Configuration
-					.log("Error connecting to database! Falling back to file backend!");
-			Variables.useMYSQLBackend = false;
-			settings.loadTickets();
+		if (Variables.useMYSQLBackend) {
+			try {
+				mysql = new MySQL();
+				Variables.tickets.addAll(mysql.readTickets());
+			} catch (Exception e) {
+				Configuration
+						.log("Error connecting to database! Falling back to file backend!");
+				Variables.useMYSQLBackend = false;
+				settings.loadTickets();
+			}
 		}
 		getServer().getPluginManager().registerEvents(
 				new MonsterTicketListener(this), this);

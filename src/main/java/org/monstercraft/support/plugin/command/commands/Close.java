@@ -96,6 +96,9 @@ public class Close extends GameCommand {
 							+ "That ticket is already closed!");
 					return;
 				}
+				if (t.getStatus().equals(Status.OPEN)) {
+					t.Claim(mod.getName());
+				}
 				t.close();
 				sendToDB(t);
 				Player p = Bukkit.getPlayer(t.getNoobName());
@@ -121,6 +124,9 @@ public class Close extends GameCommand {
 	public static void closeAll(CommandSender sender) {
 		for (HelpTicket t : Variables.tickets) {
 			if (!t.getStatus().equals(Status.CLOSED)) {
+				if (t.getStatus().equals(Status.OPEN)) {
+					t.Claim(sender.getName());
+				}
 				t.close();
 				sendToDB(t);
 				Player p = Bukkit.getPlayer(t.getNoobName());

@@ -35,13 +35,12 @@ public class MySQL {
 					+ "  PRIMARY KEY (`id`)"
 					+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 			this.connection.createStatement().executeUpdate(tableCreation);
-			Variables.tickets.addAll(readTickets());
 		}
 	}
 
 	public ArrayList<HelpTicket> readTickets() throws SQLException {
 		PreparedStatement ps = connection
-				.prepareStatement("SELECT * FROM tickets");
+				.prepareStatement("SELECT * FROM `tickets`");
 		ResultSet rs = ps.executeQuery();
 		ArrayList<HelpTicket> tickets = new ArrayList<HelpTicket>();
 		while (rs.next()) {
