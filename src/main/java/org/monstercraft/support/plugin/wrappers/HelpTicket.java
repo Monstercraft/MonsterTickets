@@ -33,6 +33,7 @@ public class HelpTicket {
 		this.y = (int) location.getY();
 		this.z = (int) location.getZ();
 		this.worldname = location.getWorld().getName();
+		this.modname = "";
 	}
 	
 	public HelpTicket(final int id, final String description,
@@ -45,6 +46,7 @@ public class HelpTicket {
 		this.y = y;
 		this.z = z;
 		this.worldname = worldname;
+		this.modname = "";
 	}
 
 	public String getDescription() {
