@@ -1,6 +1,7 @@
 MONSTERTICKETS:
     OPTIONS:
         OVERRIDE_HELP_COMMAND: false
+        USE_MYSQL_BACKEND: false
     DB:
         HOST: 'localhost'
         DATABASE: 'minecraft'

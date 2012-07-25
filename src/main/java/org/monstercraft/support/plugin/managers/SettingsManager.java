@@ -63,6 +63,8 @@ public class SettingsManager {
 		try {
 			config.set("MONSTERTICKETS.OPTIONS.OVERRIDE_HELP_COMMAND",
 					Variables.overridehelp);
+			config.set("MONSTERTICKETS.OPTIONS.USE_MYSQL_BACKEND",
+					Variables.useMYSQLBackend);
 			config.set("MONSTERTICKETS.DB.HOST", Variables.db_host);
 			config.set("MONSTERTICKETS.DB.USERNAME", Variables.db_username);
 			config.set("MONSTERTICKETS.DB.PASSWORD", Variables.db_password);
@@ -99,6 +101,9 @@ public class SettingsManager {
 			Variables.overridehelp = config.getBoolean(
 					"MONSTERTICKETS.OPTIONS.OVERRIDE_HELP_COMMAND",
 					Variables.overridehelp);
+			Variables.useMYSQLBackend = config.getBoolean(
+					"MONSTERTICKETS.OPTIONS.USE_MYSQL_BACKEND",
+					Variables.useMYSQLBackend);
 			Variables.db_host = config.getString("MONSTERTICKETS.DB.HOST");
 			Variables.db_username = config
 					.getString("MONSTERTICKETS.DB.USERNAME");

@@ -104,16 +104,12 @@ public class Configuration {
 				"[MonsterTickets - Critical error detected!]");
 		error.printStackTrace();
 	}
-
-	public static class URLS {
-		public static String UPDATE_URL = "http://dev.bukkit.org/server-mods/monstertickets/files.rss";
-	}
-
+	
 	public static class Variables {
 
 		public static LinkedList<HelpTicket> tickets = new LinkedList<HelpTicket>();
 		public static boolean overridehelp = false;
-		public static boolean useFileBackend = true;
+		public static boolean useMYSQLBackend = false;
 		public static String db_host;
 		public static String db_username;
 		public static String db_password;
