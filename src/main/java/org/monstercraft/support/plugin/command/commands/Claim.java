@@ -5,10 +5,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.monstercraft.support.MonsterTickets;
+import org.monstercraft.support.plugin.Configuration;
 import org.monstercraft.support.plugin.Configuration.Variables;
 import org.monstercraft.support.plugin.command.GameCommand;
+import org.monstercraft.support.plugin.util.Status;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
-import org.monstercraft.support.plugin.wrappers.PrivateChatter;
 
 public class Claim extends GameCommand {
 
@@ -20,104 +21,84 @@ public class Claim extends GameCommand {
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
 		if (sender instanceof Player) {
-			if (MonsterTickets.getHandleManager().getPermissionsHandler() != null) {
-				if (!MonsterTickets.getHandleManager().getPermissionsHandler()
-						.hasCommandPerms(((Player) sender), this)) {
-					sender.sendMessage("You don't have permission to preform that command.");
+			if (sender instanceof Player) {
+				if (!MonsterTickets.getPermissionsHandler().hasCommandPerms(
+						((Player) sender), this)) {
+					sender.sendMessage("You don't have permission to preform this command.");
 					return true;
 				}
-			} else {
-				sender.sendMessage("Permissions not detected, unable to run any ticket commands.");
-				return true;
 			}
+		} else {
+			sender.sendMessage("You must be ingame to claim a ticket!");
+			return true;
 		}
 		if (split.length < 2) {
 			sender.sendMessage(ChatColor.RED + "Invalid command usage!");
 			return true;
 		}
-		if (!canParse(split[1])) {
+		if (!Configuration.canParse(split[1])) {
 			sender.sendMessage(ChatColor.GREEN + "Invalid number!");
 			return true;
 		}
-		for (PrivateChatter pc : Variables.priv) {
-			if (pc.getMod().equals((Player) sender)) {
-				sender.sendMessage(ChatColor.GREEN
-						+ "You are already supporting someone!");
-				return true;
+		for (HelpTicket t : Variables.tickets) {
+			if (t.getStatus().equals(Status.CLAIMED)) {
+				if (t.getMod().equals((Player) sender)) {
+					sender.sendMessage(ChatColor.GREEN
+							+ "You are already supporting someone!");
+					return true;
+				}
 			}
 		}
-		if (Integer.parseInt(split[1]) > Variables.ticketid
+		if (Integer.parseInt(split[1]) > Variables.tickets.getLast().getID()
 				|| 1 > Integer.parseInt(split[1])) {
 			sender.sendMessage(ChatColor.GREEN
 					+ "No ticket exists with that number!");
 			return true;
 		}
-		for (HelpTicket t : Variables.tickets.keySet()) {
+		for (HelpTicket t : Variables.tickets) {
+			if (!t.getStatus().equals(Status.OPEN)) {
+				continue;
+			}
 			if (t.getID() == Integer.parseInt(split[1])) {
-				Player playa = Bukkit.getPlayer(t.getPlayerName());
-				if (playa == null) {
+				Player noob = t.getNoob();
+				if (noob == null) {
 					sender.sendMessage(ChatColor.RED
 							+ "Player not online, unable to claim the ticket");
-					Variables.tickets.remove(t);
-					return true;
-				}
-				if (Variables.tickets.get(t)) {
-					sender.sendMessage(ChatColor.RED
-							+ "Ticket already claimed.");
 					return true;
 				}
 				for (Player p : Bukkit.getOnlinePlayers()) {
-					if (MonsterTickets.getHandleManager()
-							.getPermissionsHandler().hasModPerm(p)) {
-						if (sender instanceof Player) {
-							p.sendMessage(ChatColor.GREEN + sender.getName()
-									+ " is now handeling ticket " + t.getID());
-						} else {
-							p.sendMessage(ChatColor.GREEN
-									+ "A mod in IRC is now handeling ticket "
-									+ t.getID());
-						}
+					if (MonsterTickets.getPermissionsHandler().hasNode(p,
+							"monstertickets.mod")) {
+						p.sendMessage(ChatColor.GREEN + sender.getName()
+								+ " is now handeling ticket " + t.getID());
 					}
 				}
-				Variables.tickets.put(t, true);
-				Variables.priv.add(new PrivateChatter((Player) sender, playa, t
-						.getID()));
-				Player p = Bukkit.getPlayer(t.getPlayerName());
+				t.Claim(((Player) sender).getName());
 				sender.sendMessage(ChatColor.GREEN + "Ticket " + t.getID()
 						+ " sucessfully claimed.");
-				if (p != null) {
-					p.sendMessage(ChatColor.GREEN
-							+ "******************************************************");
-					p.sendMessage(ChatColor.RED
-							+ "Your support ticket request has been accepted!");
-					p.sendMessage(ChatColor.RED
-							+ "Start chatting with the mod assisting you.");
-					p.sendMessage(ChatColor.GREEN
-							+ "******************************************************");
-					p.sendMessage(ChatColor.RED + "[Support]"
-							+ sender.getName() + ": " + ChatColor.WHITE
-							+ " Hello, my name is " + ChatColor.GOLD
-							+ sender.getName() + ChatColor.WHITE
-							+ " how can I help you?");
-					sender.sendMessage(ChatColor.RED + "[Support]"
-							+ sender.getName() + ": " + ChatColor.WHITE
-							+ " Hello, my name is " + ChatColor.GOLD
-							+ sender.getName() + ChatColor.WHITE
-							+ " how can I help you?");
-				}
+				noob.sendMessage(ChatColor.GREEN
+						+ "******************************************************");
+				noob.sendMessage(ChatColor.RED
+						+ "Your support ticket request has been accepted!");
+				noob.sendMessage(ChatColor.RED
+						+ "Start chatting with the mod assisting you.");
+				noob.sendMessage(ChatColor.GREEN
+						+ "******************************************************");
+				noob.sendMessage("");
+				noob.sendMessage(ChatColor.RED + "[Support]" + sender.getName()
+						+ ": " + ChatColor.WHITE + " Hello, my name is "
+						+ ChatColor.GOLD + sender.getName() + ChatColor.WHITE
+						+ " how can I help you?");
+				sender.sendMessage(ChatColor.RED + "[Support]"
+						+ sender.getName() + ": " + ChatColor.WHITE
+						+ " Hello, my name is " + ChatColor.GOLD
+						+ sender.getName() + ChatColor.WHITE
+						+ " how can I help you?");
 				return true;
 			}
 		}
-		sender.sendMessage(ChatColor.GREEN + "Ticket already closed!");
-		return true;
-	}
-
-	private boolean canParse(String s) {
-		try {
-			Integer.parseInt(s);
-		} catch (NumberFormatException ex) {
-			return false;
-		}
+		sender.sendMessage(ChatColor.GREEN
+				+ "The ticket ID you specified is not an open ticket, check to make sure it isn't closed or claimed.");
 		return true;
 	}
 

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.monstercraft.support.MonsterTickets;
 import org.monstercraft.support.plugin.Configuration.Variables;
 import org.monstercraft.support.plugin.command.GameCommand;
+import org.monstercraft.support.plugin.util.Status;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
 public class Open extends GameCommand {
@@ -19,22 +20,22 @@ public class Open extends GameCommand {
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
 		if (sender instanceof Player) {
-			if (MonsterTickets.getHandleManager().getPermissionsHandler() != null) {
-				if (!MonsterTickets.getHandleManager().getPermissionsHandler()
-						.hasCommandPerms(((Player) sender), this)) {
+			if (sender instanceof Player) {
+				if (!MonsterTickets.getPermissionsHandler().hasCommandPerms(
+						((Player) sender), this)) {
 					sender.sendMessage("You don't have permission to preform this command.");
 					return true;
 				}
-			} else {
-				sender.sendMessage("Permissions not detected, unable to run any ticket commands.");
-				return true;
 			}
 		} else {
 			sender.sendMessage("You must be ingame to open a ticket!");
 			return true;
 		}
-		for (HelpTicket t : Variables.tickets.keySet()) {
-			Player p = Bukkit.getPlayer(t.getPlayerName());
+		for (HelpTicket t : Variables.tickets) {
+			if (t.getStatus().equals(Status.CLOSED)) {
+				continue;
+			}
+			Player p = Bukkit.getPlayer(t.getNoobName());
 			if (p == null) {
 				continue;
 			}
@@ -54,20 +55,23 @@ public class Open extends GameCommand {
 			desc.append(split[i]);
 			desc.append(" ");
 		}
-		HelpTicket t = new HelpTicket(Variables.ticketid, desc.toString()
-				.trim().replace("|", "").replace("=", ""), sender.getName());
+		int id = 1;
+		if (Variables.tickets.getLast() != null) {
+			id = Variables.tickets.getLast().getID() + 1;
+		}
+		HelpTicket t = new HelpTicket(id, desc.toString().trim()
+				.replace("|", "").replace("=", ""), sender.getName());
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (MonsterTickets.getHandleManager().getPermissionsHandler()
-					.hasModPerm(p)) {
+			if (MonsterTickets.getPermissionsHandler().hasNode(p,
+					"monstertickets.mod")) {
 				p.sendMessage(ChatColor.GREEN + sender.getName()
 						+ " opened ticket " + t.getID());
 			}
 		}
-		Variables.ticketid++;
 		sender.sendMessage(ChatColor.RED + "Help ticket successfully opened!");
 		sender.sendMessage(ChatColor.GREEN + "" + t.getID() + " - "
-				+ t.getPlayerName() + " - " + t.getDescription());
-		Variables.tickets.put(t, false);
+				+ t.getNoobName() + " - " + t.getDescription());
+		Variables.tickets.add(t);
 		return true;
 	}
 

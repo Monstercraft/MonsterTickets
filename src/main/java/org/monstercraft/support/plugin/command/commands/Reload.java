@@ -16,14 +16,9 @@ public class Reload extends GameCommand {
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
 		if (sender instanceof Player) {
-			if (MonsterTickets.getHandleManager().getPermissionsHandler() != null) {
-				if (!MonsterTickets.getHandleManager().getPermissionsHandler()
-						.hasCommandPerms(((Player) sender), this)) {
-					sender.sendMessage("You don't have permission to preform this command.");
-					return true;
-				}
-			} else {
-				sender.sendMessage("Permissions not detected, unable to run any ticket commands.");
+			if (!MonsterTickets.getPermissionsHandler().hasCommandPerms(
+					((Player) sender), this)) {
+				sender.sendMessage("You don't have permission to preform this command.");
 				return true;
 			}
 		}

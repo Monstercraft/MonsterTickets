@@ -1,15 +1,14 @@
 package org.monstercraft.support.plugin;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.logging.Level;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.monstercraft.support.MonsterTickets;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
-import org.monstercraft.support.plugin.wrappers.PrivateChatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -55,9 +54,55 @@ public class Configuration {
 				return firstNodes.item(0).getNodeValue();
 			}
 		} catch (Exception e) {
-			MonsterTickets.debug(e);
+			debug(e);
 		}
 		return currentVersion;
+	}
+
+	public static String shortenString(String str) {
+		if (str.length() > 20) {
+			str = str.substring(0, 20);
+			str = str + "...";
+		}
+		return str;
+	}
+
+	/**
+	 * Checks if a string is a valid integer.
+	 * 
+	 * @param message
+	 *            The string to parse.
+	 * @return True if the string is a valid number; otherwise false.
+	 */
+	public static boolean canParse(String message) {
+		try {
+			Integer.parseInt(message);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Logs a message to the console.
+	 * 
+	 * @param msg
+	 *            The message to print.
+	 */
+	public static void log(String msg) {
+		Bukkit.getLogger().log(Level.INFO, "[MonsterTickets] " + msg);
+	}
+
+	/**
+	 * Logs debugging messages to the console.
+	 * 
+	 * @param error
+	 *            The message to print.
+	 */
+	public static void debug(Exception error) {
+		Bukkit.getLogger().log(Level.WARNING,
+				"[MonsterTickets - Critical error detected!]");
+		error.printStackTrace();
 	}
 
 	public static class URLS {
@@ -66,9 +111,7 @@ public class Configuration {
 
 	public static class Variables {
 
-		public static LinkedHashMap<HelpTicket, Boolean> tickets = new LinkedHashMap<HelpTicket, Boolean>();
-		public static int ticketid = 1;
-		public static ArrayList<PrivateChatter> priv = new ArrayList<PrivateChatter>();
+		public static LinkedList<HelpTicket> tickets = new LinkedList<HelpTicket>();
 		public static boolean overridehelp = false;
 
 	}

@@ -11,9 +11,11 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.monstercraft.support.MonsterTickets;
+import org.monstercraft.support.plugin.Configuration;
 import org.monstercraft.support.plugin.Configuration.Variables;
 import org.monstercraft.support.plugin.command.commands.Close;
-import org.monstercraft.support.plugin.wrappers.PrivateChatter;
+import org.monstercraft.support.plugin.util.Status;
+import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
 /**
  * This class listens for chat ingame to pass to the IRC.
@@ -33,25 +35,31 @@ public class MonsterTicketListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onChat(PlayerChatEvent event) {
-		for (PrivateChatter pc : Variables.priv) {
-			if (pc.getNoob().equals(event.getPlayer())
-					|| pc.getMod().equals(event.getPlayer())) {
-				pc.getNoob().sendMessage(
-						ChatColor.RED + "[Support] "
-								+ event.getPlayer().getDisplayName() + ": "
-								+ ChatColor.WHITE + event.getMessage());
-				pc.getMod().sendMessage(
-						ChatColor.RED + "[Support] "
-								+ event.getPlayer().getDisplayName() + ": "
-								+ ChatColor.WHITE + event.getMessage());
-				for (Player pl : Bukkit.getOnlinePlayers()) {
-					if (MonsterTickets.getHandleManager()
-							.getPermissionsHandler().hasSpyPerm(pl)
-							&& pl != pc.getMod() && pl != pc.getNoob()) {
-						pl.sendMessage(ChatColor.DARK_BLUE + "[Spy]"
-								+ ChatColor.RED + "[Support] "
-								+ event.getPlayer().getDisplayName() + ": "
-								+ ChatColor.WHITE + event.getMessage());
+		for (HelpTicket t : Variables.tickets) {
+			if (t.getMod() == null || t.getNoob() == null
+					|| t.getStatus().equals(Status.CLOSED)) {
+				continue;
+			}
+			if (t.getStatus().equals(Status.CLAIMED)) {
+				if (t.getNoob().equals(event.getPlayer())
+						|| t.getMod().equals(event.getPlayer())) {
+					t.getNoob().sendMessage(
+							ChatColor.RED + "[Support] "
+									+ event.getPlayer().getDisplayName() + ": "
+									+ ChatColor.WHITE + event.getMessage());
+					t.getMod().sendMessage(
+							ChatColor.RED + "[Support] "
+									+ event.getPlayer().getDisplayName() + ": "
+									+ ChatColor.WHITE + event.getMessage());
+					for (Player pl : Bukkit.getOnlinePlayers()) {
+						if (MonsterTickets.getPermissionsHandler().hasNode(pl,
+								"monstertickets.mod.spy")
+								&& pl != t.getMod() && pl != t.getNoob()) {
+							pl.sendMessage(ChatColor.DARK_BLUE + "[Spy]"
+									+ ChatColor.RED + "[Support] "
+									+ event.getPlayer().getDisplayName() + ": "
+									+ ChatColor.WHITE + event.getMessage());
+						}
 					}
 				}
 				event.setCancelled(true);
@@ -79,7 +87,7 @@ public class MonsterTicketListener implements Listener {
 		String[] message = msg.split("\\s+");
 		if (msg.startsWith("/help") && msg.length() > 5
 				&& Variables.overridehelp) {
-			if (message.length == 2 && canParse(message[1])) {
+			if (message.length == 2 && Configuration.canParse(message[1])) {
 				return;
 			}
 			msg = "/request " + msg.substring(6);
@@ -87,22 +95,15 @@ public class MonsterTicketListener implements Listener {
 		}
 	}
 
-	private boolean canParse(String message) {
-		try {
-			Integer.parseInt(message);
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
-	}
-
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		for (PrivateChatter pc : Variables.priv) {
-			if (pc.getMod().equals(event.getPlayer())
-					|| pc.getNoob().equals(event.getPlayer())) {
-				Close.close(pc.getMod());
-				return;
+		for (HelpTicket t : Variables.tickets) {
+			if (t.getMod().equals(event.getPlayer())
+					|| t.getNoob().equals(event.getPlayer())) {
+				if (t.getStatus().equals(Status.CLAIMED)) {
+					Close.close(t.getMod());
+					return;
+				}
 			}
 		}
 	}

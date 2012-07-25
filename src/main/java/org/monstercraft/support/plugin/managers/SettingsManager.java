@@ -4,14 +4,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.monstercraft.support.MonsterTickets;
+import org.monstercraft.support.plugin.Configuration;
 import org.monstercraft.support.plugin.Configuration.Variables;
+import org.monstercraft.support.plugin.command.commands.Close;
+import org.monstercraft.support.plugin.util.Status;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
 /**
@@ -23,26 +25,31 @@ import org.monstercraft.support.plugin.wrappers.HelpTicket;
 public class SettingsManager {
 	private MonsterTickets plugin = null;
 
-	public static String SETTINGS_PATH = "plugins/MonsterTickets/";
+	private String SETTINGS_PATH = null;
 
-	public static String SETTINGS_FILE = "Config.yml";
+	private String SETTINGS_FILE = "Config.yml";
 
 	/**
 	 * Creates an instance of the Settings class.
 	 * 
 	 * @param plugin
 	 *            The parent plugin.
+	 * @throws InvalidConfigurationException
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
 	public SettingsManager(MonsterTickets plugin) {
 		this.plugin = plugin;
+		this.SETTINGS_PATH = plugin.getDataFolder().getAbsolutePath();
 		load();
+		loadTicketsConfig();
 	}
 
 	private void save(final FileConfiguration config, final File file) {
 		try {
 			config.save(file);
 		} catch (IOException e) {
-			MonsterTickets.debug(e);
+			Configuration.debug(e);
 		}
 	}
 
@@ -57,9 +64,8 @@ public class SettingsManager {
 			config.set("MONSTERTICKETS.OPTIONS.OVERRIDE_HELP_COMMAND",
 					Variables.overridehelp);
 			save(config, CONFIGURATION_FILE);
-			saveTicketsConfig();
 		} catch (Exception e) {
-			MonsterTickets.debug(e);
+			Configuration.debug(e);
 		}
 	}
 
@@ -68,20 +74,19 @@ public class SettingsManager {
 	 */
 	public void load() {
 		final FileConfiguration config = this.plugin.getConfig();
-		final File CONFIGURATION_FILE = new File(SETTINGS_PATH + File.separator
-				+ SETTINGS_FILE);
+		final File CONFIGURATION_FILE = new File(SETTINGS_PATH, SETTINGS_FILE);
 		boolean exists = CONFIGURATION_FILE.exists();
 		if (exists) {
 			try {
-				MonsterTickets.log("Loading settings!");
+				Configuration.log("Loading settings!");
 				config.options()
 						.header("MonsterTickets configuration file, refer to our DBO page for help.");
 				config.load(CONFIGURATION_FILE);
 			} catch (Exception e) {
-				MonsterTickets.debug(e);
+				Configuration.debug(e);
 			}
 		} else {
-			MonsterTickets.log("Loading default settings!");
+			Configuration.log("Loading default settings!");
 			config.options()
 					.header("MonsterTickets configuration file, refer to our DBO page for help.");
 			config.options().copyDefaults(true);
@@ -91,53 +96,83 @@ public class SettingsManager {
 					"MONSTERTICKETS.OPTIONS.OVERRIDE_HELP_COMMAND",
 					Variables.overridehelp);
 			save(config, CONFIGURATION_FILE);
-			loadTicketsConfig();
 		} catch (Exception e) {
-			MonsterTickets.debug(e);
+			Configuration.debug(e);
 		}
 	}
 
-	private void loadTicketsConfig() throws FileNotFoundException, IOException,
-			InvalidConfigurationException {
-		File TICKETS_FILE = new File(SETTINGS_PATH + File.separator
-				+ "Tickets.dat");
+	private void loadTicketsConfig() {
+		File TICKETS_FILE = new File(SETTINGS_PATH, "Tickets.dat");
 		if (!TICKETS_FILE.exists()) {
 			return;
 		}
 		List<String> tickets = new ArrayList<String>();
 		FileConfiguration config = new YamlConfiguration();
-		config.load(TICKETS_FILE);
+		try {
+			config.load(TICKETS_FILE);
+		} catch (Exception e) {
+			Configuration.log("Error loading cached tickets!");
+			File back = new File(SETTINGS_PATH, "OLD_Tickets.dat");
+			if (back.exists()) {
+				back.delete();// prevent errors when saving later
+			}
+			TICKETS_FILE.renameTo(back); // prevent errors when saving
+			return;
+		}
 		config.options().header("DO NOT MODIFY");
-		Variables.ticketid = config.getInt("ID", Variables.ticketid);
 		tickets = config.getStringList("TICKETS");
 		if (!tickets.isEmpty()) {
 			for (String str : tickets) {
-				if (str.contains("|") && str.contains("=")) {
-					int id = Integer
-							.parseInt(str.substring(0, str.indexOf("|")));
-					String player = str.substring(str.indexOf("|") + 1,
-							str.indexOf("="));
-					String description = str.substring(str.indexOf("=") + 1);
-					Variables.tickets.put(new HelpTicket(id, description,
-							player), false);
+				if (str.contains("|")) {
+					int count = 0;
+					for (char c : str.toCharArray()) {
+						if (c == '|') {
+							count++;
+						}
+					}
+					int idx1 = str.indexOf("|");
+					int idx2 = str.indexOf("|", idx1);
+					if (count == 3) {
+						int id = Integer.parseInt(str.substring(0, idx1));
+						String player = str.substring(idx1 + 1, idx2);
+						String description = str.substring(idx2 + 1);
+						Variables.tickets.add(new HelpTicket(id, description,
+								player));
+					} else if (count == 4) {
+						int idx3 = str.indexOf("|", idx2);
+						int id = Integer.parseInt(str.substring(0, idx1));
+						String player = str.substring(idx1 + 1, idx2);
+						String description = str.substring(idx2 + 1, idx3);
+						String modname = str.substring(idx3 + 1);
+						HelpTicket t = new HelpTicket(id, description, player);
+						Variables.tickets.add(t);
+						Variables.tickets.getLast().Claim(modname);
+						Variables.tickets.getLast().close();
+					}
 				}
 			}
 		}
 	}
 
-	private void saveTicketsConfig() {
+	public void saveTicketsConfig() {
 		File TICKETS_FILE = new File(SETTINGS_PATH + File.separator
 				+ "Tickets.dat");
-		List<String> tickets = new ArrayList<String>();
+		ArrayList<String> tickets = new ArrayList<String>();
 		FileConfiguration config = new YamlConfiguration();
 		config.options().header("DO NOT MODIFY");
-		Iterator<HelpTicket> i = Variables.tickets.keySet().iterator();
-		while (i.hasNext()) {
-			HelpTicket h = i.next();
-			tickets.add(h.getID() + "|" + h.getPlayerName() + "="
-					+ h.getDescription());
+		for (HelpTicket t : Variables.tickets) {
+			if (t.getStatus().equals(Status.OPEN)) {
+				tickets.add(t.getID() + "|" + t.getNoobName() + "|"
+						+ t.getDescription());
+			} else if (t.getStatus().equals(Status.CLAIMED)) {
+				Close.close(t.getMod());
+			}
+			if (t.getStatus().equals(Status.CLOSED)) {
+				tickets.add(t.getID() + "|" + t.getNoobName() + "|"
+						+ t.getDescription() + "|" + t.getModName());
+			}
+
 		}
-		config.set("ID", Variables.ticketid);
 		if (!tickets.isEmpty()) {
 			config.set("TICKETS", tickets);
 		}

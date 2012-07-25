@@ -5,10 +5,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.monstercraft.support.MonsterTickets;
+import org.monstercraft.support.plugin.Configuration;
 import org.monstercraft.support.plugin.Configuration.Variables;
 import org.monstercraft.support.plugin.command.GameCommand;
+import org.monstercraft.support.plugin.util.Status;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
-import org.monstercraft.support.plugin.wrappers.PrivateChatter;
 
 public class Close extends GameCommand {
 
@@ -20,15 +21,12 @@ public class Close extends GameCommand {
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
 		if (sender instanceof Player) {
-			if (MonsterTickets.getHandleManager().getPermissionsHandler() != null) {
-				if (!MonsterTickets.getHandleManager().getPermissionsHandler()
-						.hasCommandPerms(((Player) sender), this)) {
+			if (sender instanceof Player) {
+				if (!MonsterTickets.getPermissionsHandler().hasCommandPerms(
+						((Player) sender), this)) {
 					sender.sendMessage("You don't have permission to preform this command.");
 					return true;
 				}
-			} else {
-				sender.sendMessage("Permissions not detected, unable to run any ticket commands.");
-				return true;
 			}
 		}
 		if (split.length == 2) {
@@ -37,7 +35,7 @@ public class Close extends GameCommand {
 				sender.sendMessage(ChatColor.GREEN
 						+ "Successfully closed all open and claimed tickets!");
 				return true;
-			} else if (canParse(split[1])) {
+			} else if (Configuration.canParse(split[1])) {
 				close(sender, Integer.parseInt(split[1]));
 				return true;
 			} else {
@@ -54,14 +52,6 @@ public class Close extends GameCommand {
 		return true;
 	}
 
-	private boolean canParse(String s) {
-		try {
-			Integer.parseInt(s);
-		} catch (NumberFormatException ex) {
-			return false;
-		}
-		return true;
-	}
 
 	@Override
 	public String getPermission() {
@@ -69,18 +59,16 @@ public class Close extends GameCommand {
 	}
 
 	public static void close(Player mod) {
-		int id = -1;
-		for (PrivateChatter pc : Variables.priv) {
-			if (pc.getMod().equals(mod)) {
-				id = pc.getID();
-				Variables.priv.remove(pc);
-				break;
-			}
+		if (mod == null) {
+			return;
 		}
-		for (HelpTicket t : Variables.tickets.keySet()) {
-			if (t.getID() == id) {
-				Variables.tickets.remove(t);
-				Player p = Bukkit.getPlayer(t.getPlayerName());
+		for (HelpTicket t : Variables.tickets) {
+			if (t.getStatus().equals(Status.CLOSED)) {
+				continue;
+			}
+			if (t.getMod() == mod) {
+				t.close();
+				Player p = t.getNoob();
 				if (p != null) {
 					p.sendMessage(ChatColor.GREEN
 							+ "Your support ticket has been closed.");
@@ -88,8 +76,8 @@ public class Close extends GameCommand {
 				mod.sendMessage(ChatColor.GREEN + "Ticket " + t.getID()
 						+ " sucessfully closed.");
 				for (Player pl : Bukkit.getOnlinePlayers()) {
-					if (MonsterTickets.getHandleManager()
-							.getPermissionsHandler().hasModPerm(pl)) {
+					if (MonsterTickets.getPermissionsHandler().hasNode(pl,
+							"monstertickets.mod")) {
 						pl.sendMessage(ChatColor.GREEN + mod.getName()
 								+ " closed ticket " + t.getID());
 					}
@@ -102,16 +90,15 @@ public class Close extends GameCommand {
 	}
 
 	public static void close(CommandSender mod, int id) {
-		for (PrivateChatter pc : Variables.priv) {
-			if (pc.getID() == id) {
-				Variables.priv.remove(pc);
-				break;
-			}
-		}
-		for (HelpTicket t : Variables.tickets.keySet()) {
+		for (HelpTicket t : Variables.tickets) {
 			if (t.getID() == id) {
-				Variables.tickets.remove(t);
-				Player p = Bukkit.getPlayer(t.getPlayerName());
+				if (t.getStatus().equals(Status.CLOSED)) {
+					mod.sendMessage(ChatColor.GREEN
+							+ "That ticket is already closed!");
+					return;
+				}
+				t.close();
+				Player p = t.getNoob();
 				if (p != null) {
 					p.sendMessage(ChatColor.GREEN
 							+ "Your support ticket has been closed.");
@@ -119,8 +106,8 @@ public class Close extends GameCommand {
 				mod.sendMessage(ChatColor.GREEN + "Ticket " + t.getID()
 						+ " sucessfully closed.");
 				for (Player pl : Bukkit.getOnlinePlayers()) {
-					if (MonsterTickets.getHandleManager()
-							.getPermissionsHandler().hasModPerm(pl)) {
+					if (MonsterTickets.getPermissionsHandler().hasNode(pl,
+							"monstertickets.mod")) {
 						pl.sendMessage(ChatColor.GREEN + mod.getName()
 								+ " closed ticket " + t.getID());
 					}
@@ -128,23 +115,21 @@ public class Close extends GameCommand {
 				return;
 			}
 		}
-		mod.sendMessage(ChatColor.GREEN
-				+ "You are not currently supporting a ticket!");
+		mod.sendMessage(ChatColor.GREEN + "No ticket with that ID exists!");
 	}
 
 	public static void closeAll(CommandSender sender) {
-		Variables.priv.clear();
-		for (HelpTicket t : Variables.tickets.keySet()) {
-			Variables.tickets.remove(t);
-			Player p = Bukkit.getPlayer(t.getPlayerName());
+		for (HelpTicket t : Variables.tickets) {
+			t.close();
+			Player p = t.getNoob();
 			if (p != null) {
 				p.sendMessage(ChatColor.GREEN
 						+ "Your support ticket has been forced closed, if this was a mistake please create a new ticket.");
 			}
 		}
 		for (Player pl : Bukkit.getOnlinePlayers()) {
-			if (MonsterTickets.getHandleManager().getPermissionsHandler()
-					.hasModPerm(pl)) {
+			if (MonsterTickets.getPermissionsHandler().hasNode(pl,
+					"monstertickets.mod")) {
 				pl.sendMessage(ChatColor.GREEN
 						+ "All support tickets have been closed by "
 						+ sender.getName() + ".");

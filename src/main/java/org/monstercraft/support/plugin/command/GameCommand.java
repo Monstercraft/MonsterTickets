@@ -1,9 +1,8 @@
 package org.monstercraft.support.plugin.command;
 
 import org.bukkit.command.CommandSender;
-import org.monstercraft.support.MonsterTickets;
 
-public abstract class GameCommand extends MonsterTickets {
+public abstract class GameCommand {
 
 	public abstract boolean canExecute(CommandSender sender, String[] split);
 
