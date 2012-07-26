@@ -46,8 +46,7 @@ public class Check extends GameCommand {
 			}
 			split = temp;
 		}
-		sender.sendMessage(ChatColor.RED
-				+ "Listing all support tickets! ("
+		sender.sendMessage(ChatColor.RED + "Listing all support tickets! ("
 				+ Variables.tickets.size() + ")");
 		sender.sendMessage(ChatColor.GREEN + "Green" + ChatColor.RED
 				+ " are open support tickets!");
@@ -138,11 +137,15 @@ public class Check extends GameCommand {
 		if (t.getStatus().equals(Status.OPEN)) {
 			sender.sendMessage(ChatColor.GREEN + "" + t.getID()
 					+ ChatColor.GOLD + " - " + t.getNoobName()
-					+ ChatColor.GREEN + " - " + t.getDescription());
+					+ ChatColor.GREEN + " - " + t.getDescription()
+					+ ChatColor.GREEN + " - X:" + t.getX() + " Y:" + t.getY()
+					+ " Z:" + t.getZ() + " World:" + t.getWorldName());
 		} else if (t.getStatus().equals(Status.CLAIMED)) {
 			sender.sendMessage(ChatColor.BLUE + "" + t.getID() + ChatColor.GOLD
 					+ " - " + t.getNoobName() + ChatColor.BLUE + " - "
-					+ t.getDescription());
+					+ t.getDescription() + ChatColor.GREEN + " - X:" + t.getX()
+					+ " Y:" + t.getY() + " Z:" + t.getZ() + " World:"
+					+ t.getWorldName());
 		} else if (t.getStatus().equals(Status.CLOSED) && show_closed) {
 			sender.sendMessage(ChatColor.DARK_RED + "" + t.getID()
 					+ ChatColor.GOLD + " - " + t.getNoobName()

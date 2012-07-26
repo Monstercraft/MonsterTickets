@@ -53,7 +53,7 @@ public class MySQL {
 			String world = rs.getString("world");
 			String mod = rs.getString("helper");
 			int status = rs.getInt("status");
-			HelpTicket h = new HelpTicket(id, noob, description, x, y, z, world);
+			HelpTicket h = new HelpTicket(id, description, noob, x, y, z, world);
 			if (status == 3 && mod != null) {
 				h.Claim(mod);
 				h.close();
