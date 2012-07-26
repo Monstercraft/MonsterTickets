@@ -30,13 +30,8 @@ public class Adminchat extends GameCommand {
 			return true;
 		}
 		String[] temp = new String[split.length - 1];
-		int i = 0;
-		for (String s : split) {
-			if (i == 0) {
-				continue;
-			}
-			temp[i] = s;
-			i++;
+		for (int i = 1; i < split.length; i++) {
+			temp[i - 1] = split[i];
 		}
 		split = temp;
 		StringBuilder sb = new StringBuilder();

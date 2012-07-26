@@ -34,6 +34,7 @@ public class Check extends GameCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
+		boolean match = false;
 		show_closed = false;
 		for (String s : split) {
 			if (s.equalsIgnoreCase("-closed")) {
@@ -103,8 +104,14 @@ public class Check extends GameCommand {
 			for (HelpTicket t : tickets) {
 				if (t.getID() == ticketID) {
 					displayTicket(t, sender);
+					match = true;
+					break;
 				}
 			}
+		}
+		if (!match) {
+			sender.sendMessage(ChatColor.RED
+					+ "That ticket is closed. If you wish to check a closed ticket add -closed to the end of the command.");
 		}
 		tickets.clear();
 		return true;
