@@ -40,7 +40,7 @@ public class MySQL {
 
 	public ArrayList<HelpTicket> readTickets(int Status) throws SQLException {
 		PreparedStatement ps = connection
-				.prepareStatement("SELECT * FROM `tickets` WHERE status == ?");
+				.prepareStatement("SELECT * FROM `tickets` WHERE status=?");
 		ps.setInt(1, Status);
 		ResultSet rs = ps.executeQuery();
 		ArrayList<HelpTicket> tickets = new ArrayList<HelpTicket>();
