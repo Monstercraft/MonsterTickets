@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.monstercraft.support.MonsterTickets;
 import org.monstercraft.support.plugin.Configuration;
 import org.monstercraft.support.plugin.Configuration.Variables;
+import org.monstercraft.support.plugin.command.commands.Check;
 import org.monstercraft.support.plugin.command.commands.Close;
 import org.monstercraft.support.plugin.util.Status;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
@@ -81,6 +82,19 @@ public class MonsterTicketListener implements Listener {
 			event.getPlayer().sendMessage(
 					ChatColor.RED + "To open a support request type:"
 							+ ChatColor.GREEN + " /request (issue)");
+		}
+		if (plugin.getPermissionsHandler().hasCommandPerms(event.getPlayer(),
+				new Check(plugin))) {
+			int count = 0;
+			for (HelpTicket t : Variables.tickets) {
+				if (!t.getStatus().equals(Status.OPEN)) {
+					continue;
+				}
+				count++;
+			}
+			event.getPlayer().sendMessage(
+					ChatColor.GREEN + "There are " + count
+							+ " open support tickets.");
 		}
 	}
 

@@ -11,11 +11,11 @@ import org.monstercraft.support.plugin.util.Status;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
 public class Check extends GameCommand {
-	
-	//private static MonsterTickets instance;
+
+	// private static MonsterTickets instance;
 
 	public Check(MonsterTickets instance) {
-		//Check.instance = instance;
+		// Check.instance = instance;
 	}
 
 	private boolean show_closed = false;
@@ -145,7 +145,9 @@ public class Check extends GameCommand {
 		} else if (t.getStatus().equals(Status.CLOSED) && show_closed) {
 			sender.sendMessage(ChatColor.DARK_RED + "" + t.getID()
 					+ ChatColor.GOLD + " - " + t.getNoobName()
-					+ ChatColor.DARK_RED + " - " + t.getDescription());
+					+ ChatColor.DARK_RED + " - " + t.getDescription()
+					+ ChatColor.GREEN + " - X:" + t.getX() + " Y:" + t.getY()
+					+ " Z:" + t.getZ() + " World:" + t.getWorldName());
 		} else {
 			sender.sendMessage(ChatColor.RED
 					+ "That ticket is closed. If you wish to check a closed ticket add -closed to the end of the command.");

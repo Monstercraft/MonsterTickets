@@ -4,6 +4,7 @@ version: '${project.version}'
 author: Fletch_to_99
 description: A ticket management system.
 depend: [Vault]
+loadbefore: [Herochat]
 commands:
   request:
     description: Used to open a help ticket.
