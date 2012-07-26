@@ -24,6 +24,9 @@ commands:
   mtreload:
     description: Reloads the plugins settings.
     usage: /mtreload
+  tp-ticket:
+    description: Teleports to the open location of a ticket.
+    usage: /tp-ticket (id)
 permissions:
   monstertickets.help:
     description: Open a support ticket.
@@ -43,6 +46,9 @@ permissions:
   monstertickets.reload:
     description: Allows the mod to reload the plugins settings.
     default: op
+  monstertickets.tp:
+    description: Allows the mod to tp to the specfied ticket id.
+    default: op
   monstertickets.mod:
     description: All the nodes
     default: op
@@ -52,3 +58,4 @@ permissions:
       monstertickets.close: true
       monstertickets.check: true
       monstertickets.list: true
+      monstertickets.tp: true
