@@ -18,7 +18,7 @@ public class Check extends GameCommand {
 		// Check.instance = instance;
 	}
 
-	private boolean show_closed = false;
+	private boolean show_closed;
 
 	@Override
 	public boolean canExecute(CommandSender sender, String[] split) {
@@ -27,6 +27,7 @@ public class Check extends GameCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
+		show_closed = false;
 		for (String s : split) {
 			if (s.equalsIgnoreCase("-closed")) {
 				show_closed = true;
@@ -46,7 +47,7 @@ public class Check extends GameCommand {
 			split = temp;
 		}
 		sender.sendMessage(ChatColor.RED
-				+ "Listing all open support tickets! ("
+				+ "Listing all support tickets! ("
 				+ Variables.tickets.size() + ")");
 		sender.sendMessage(ChatColor.GREEN + "Green" + ChatColor.RED
 				+ " are open support tickets!");
