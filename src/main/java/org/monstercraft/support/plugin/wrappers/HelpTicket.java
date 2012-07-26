@@ -35,7 +35,7 @@ public class HelpTicket {
 		this.worldname = location.getWorld().getName();
 		this.modname = "";
 	}
-	
+
 	public HelpTicket(final int id, final String description,
 			final String player, int x, int y, int z, String worldname) {
 		this.id = id;
@@ -50,7 +50,7 @@ public class HelpTicket {
 	}
 
 	public String getDescription() {
-		return description;
+		return description.trim();
 	}
 
 	public int getID() {
@@ -62,11 +62,11 @@ public class HelpTicket {
 	}
 
 	public String getNoobName() {
-		return noobname;
+		return noobname.trim();
 	}
 
 	public String getModName() {
-		return modname;
+		return modname.trim();
 	}
 
 	public int getX() {
@@ -80,9 +80,9 @@ public class HelpTicket {
 	public int getZ() {
 		return z;
 	}
-	
+
 	public String getWorldName() {
-		return worldname;
+		return worldname.trim();
 	}
 
 	public void Claim(String modname) {
