@@ -34,7 +34,6 @@ public class Check extends GameCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
-		tickets = getTickets();
 		show_closed = false;
 		for (String s : split) {
 			if (s.equalsIgnoreCase("-closed")) {
@@ -54,6 +53,7 @@ public class Check extends GameCommand {
 			}
 			split = temp;
 		}
+		tickets = getTickets();
 		sender.sendMessage(ChatColor.RED + "Listing support tickets.");
 		sender.sendMessage(ChatColor.GREEN + "Green" + ChatColor.RED
 				+ " are open support tickets!");

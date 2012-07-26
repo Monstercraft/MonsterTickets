@@ -27,6 +27,12 @@ commands:
   mt:
     description: All of the extra commands.
     usage: /mt (command) (args)
+  ac:
+    description: Send a message to adminchat.
+    usage: /ac (message)
+  adminchat:
+    description: Send a message to adminchat.
+    usage: /adminchat (message)
 permissions:
   monstertickets.help:
     description: Open a support ticket.

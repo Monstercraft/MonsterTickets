@@ -18,18 +18,27 @@ public class Adminchat extends GameCommand {
 	@Override
 	public boolean canExecute(CommandSender sender, String[] split) {
 		return split.length > 1
-				&& split[0].equalsIgnoreCase("mt")
-				&& (split[1].equalsIgnoreCase("adminchat") || split[1]
+				&& (split[0].equalsIgnoreCase("adminchat") || split[0]
 						.equalsIgnoreCase("ac"));
 	}
 
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
-		if (split.length < 3) {
+		if (split.length == 1) {
 			sender.sendMessage(ChatColor.GREEN
 					+ "You must write a message to send!.");
 			return true;
 		}
+		String[] temp = new String[split.length - 1];
+		int i = 0;
+		for (String s : split) {
+			if (i == 0) {
+				continue;
+			}
+			temp[i] = s;
+			i++;
+		}
+		split = temp;
 		StringBuilder sb = new StringBuilder();
 		for (String s : split) {
 			sb.append(s);

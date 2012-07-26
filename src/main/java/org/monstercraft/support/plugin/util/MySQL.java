@@ -58,6 +58,9 @@ public class MySQL {
 			if (status == 3 && mod != null) {
 				h.Claim(mod);
 				h.close();
+			} else if (status == 3 && mod == null) {
+				h.Claim("Forced closed!");
+				h.close();
 			}
 			tickets.add(h);
 		}
