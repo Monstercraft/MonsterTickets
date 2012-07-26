@@ -147,7 +147,7 @@ public class SettingsManager {
 							count++;
 						}
 					}
-					if (count == 5) {
+					if (count == 7) {
 						int idx1 = str.indexOf("|");
 						int idx2 = str.indexOf("|", idx1 + 1);
 						int idx3 = str.indexOf("|", idx2 + 1);
