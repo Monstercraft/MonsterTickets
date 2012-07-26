@@ -34,10 +34,14 @@ public class Toggle extends GameCommand {
 		if (split[2].equalsIgnoreCase("spy")) {
 			if (Variables.nospy.contains((Player) sender)) {
 				Variables.nospy.remove((Player) sender);
+				sender.sendMessage(ChatColor.GREEN + "Successfully enabled spy mode!");
 			} else {
 				Variables.nospy.add((Player) sender);
+				sender.sendMessage(ChatColor.GREEN + "Successfully disabled spy mode!");
 			}
+			return true;
 		}
+		sender.sendMessage(ChatColor.RED + "No such toggle exists!");
 		return true;
 	}
 
