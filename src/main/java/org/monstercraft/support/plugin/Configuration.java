@@ -65,6 +65,7 @@ public class Configuration {
 	public static class Variables {
 		public static LinkedList<HelpTicket> tickets = new LinkedList<HelpTicket>();
 		public static ArrayList<Player> nospy = new ArrayList<Player>();
+		public static ArrayList<Player> adminchat = new ArrayList<Player>();
 		public static boolean overridehelp = false;
 		public static boolean useMYSQLBackend = false;
 		public static String db_host;

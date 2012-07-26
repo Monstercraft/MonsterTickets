@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.monstercraft.support.MonsterTickets;
 import org.monstercraft.support.plugin.command.GameCommand;
+import org.monstercraft.support.plugin.command.commands.Adminchat;
 import org.monstercraft.support.plugin.command.commands.Check;
 import org.monstercraft.support.plugin.command.commands.Claim;
 import org.monstercraft.support.plugin.command.commands.Close;
@@ -40,6 +41,7 @@ public class CommandManager {
 			gameCommands.add(new Claim(instance));
 			gameCommands.add(new Teleport(instance));
 			gameCommands.add(new Toggle(instance));
+			gameCommands.add(new Adminchat(instance));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

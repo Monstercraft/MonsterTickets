@@ -9,10 +9,10 @@ import org.monstercraft.support.plugin.command.GameCommand;
 
 public class Toggle extends GameCommand {
 
-	// private static MonsterTickets instance;
+	private static MonsterTickets instance;
 
 	public Toggle(MonsterTickets instance) {
-		// Toggle.instance = instance;
+		Toggle.instance = instance;
 	}
 
 	@Override
@@ -32,12 +32,39 @@ public class Toggle extends GameCommand {
 			return true;
 		}
 		if (split[2].equalsIgnoreCase("spy")) {
+			if (!instance.getPermissionsHandler().hasNode((Player) sender,
+					"monstertickets.mod.spy")) {
+				sender.sendMessage(ChatColor.RED
+						+ "You do not have permission to modify that toggle!");
+				return true;
+			}
 			if (Variables.nospy.contains((Player) sender)) {
 				Variables.nospy.remove((Player) sender);
-				sender.sendMessage(ChatColor.GREEN + "Successfully enabled spy mode!");
+				sender.sendMessage(ChatColor.GREEN
+						+ "Successfully enabled spy mode!");
 			} else {
 				Variables.nospy.add((Player) sender);
-				sender.sendMessage(ChatColor.GREEN + "Successfully disabled spy mode!");
+				sender.sendMessage(ChatColor.GREEN
+						+ "Successfully disabled spy mode!");
+			}
+			return true;
+		}
+		if (split[2].equalsIgnoreCase("adminchat")
+				|| split[2].equalsIgnoreCase("ac")) {
+			if (!instance.getPermissionsHandler().hasNode((Player) sender,
+					"monstertickets.adminchat")) {
+				sender.sendMessage(ChatColor.RED
+						+ "You do not have permission to modify that toggle!");
+				return true;
+			}
+			if (Variables.adminchat.contains((Player) sender)) {
+				Variables.adminchat.remove((Player) sender);
+				sender.sendMessage(ChatColor.GREEN
+						+ "Your messages will now be sent to game!");
+			} else {
+				Variables.adminchat.add((Player) sender);
+				sender.sendMessage(ChatColor.GREEN
+						+ "Your messages will now be sent to adminchat");
 			}
 			return true;
 		}

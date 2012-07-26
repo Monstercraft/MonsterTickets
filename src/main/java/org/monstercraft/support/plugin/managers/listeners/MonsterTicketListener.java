@@ -73,6 +73,18 @@ public class MonsterTicketListener implements Listener {
 				return;
 			}
 		}
+		if (Variables.adminchat.contains(event.getPlayer())) {
+			for (Player p : Bukkit.getOnlinePlayers()) {
+				if (plugin.getPermissionsHandler().hasNode(p,
+						"monstertickets.adminchat")) {
+					p.sendMessage(ChatColor.RED + "[Admin Chat]"
+							+ event.getPlayer().getName() + ": "
+							+ ChatColor.RESET + event.getMessage());
+				}
+			}
+			event.setCancelled(true);
+			return;
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -119,6 +131,9 @@ public class MonsterTicketListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (Variables.nospy.contains(event.getPlayer())) {
 			Variables.nospy.remove(event.getPlayer());
+		}
+		if (Variables.adminchat.contains(event.getPlayer())) {
+			Variables.adminchat.remove(event.getPlayer());
 		}
 		for (HelpTicket t : Variables.tickets) {
 			if (t.getModName().equalsIgnoreCase(event.getPlayer().getName())

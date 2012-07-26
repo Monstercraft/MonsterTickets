@@ -52,6 +52,9 @@ permissions:
   monstertickets.toggle:
     description: Allows the player to modify toggles on themselves.
     default: op
+  monstertickets.adminchat:
+    description: Allows the player to use the built in adminchat feature.
+    default: op
   monstertickets.mod:
     description: All the nodes
     default: op
@@ -63,3 +66,4 @@ permissions:
       monstertickets.list: true
       monstertickets.tp: true
       monstertickets.toggle: true
+      monstertickets.adminchat: true
