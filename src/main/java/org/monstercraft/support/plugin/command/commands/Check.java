@@ -46,8 +46,7 @@ public class Check extends GameCommand {
 			}
 			split = temp;
 		}
-		sender.sendMessage(ChatColor.RED + "Listing all support tickets! ("
-				+ Variables.tickets.size() + ")");
+		sender.sendMessage(ChatColor.RED + "Listing support tickets.");
 		sender.sendMessage(ChatColor.GREEN + "Green" + ChatColor.RED
 				+ " are open support tickets!");
 		sender.sendMessage(ChatColor.BLUE + "Blue" + ChatColor.RED

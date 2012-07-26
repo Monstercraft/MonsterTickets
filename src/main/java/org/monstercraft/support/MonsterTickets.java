@@ -37,6 +37,8 @@ public final class MonsterTickets extends JavaPlugin {
 				Variables.useMYSQLBackend = false;
 				settings.loadTickets();
 			}
+		} else {
+			settings.loadTickets();
 		}
 		getServer().getPluginManager().registerEvents(
 				new MonsterTicketListener(this), this);
