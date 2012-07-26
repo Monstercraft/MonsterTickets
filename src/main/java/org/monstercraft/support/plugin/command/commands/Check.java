@@ -67,8 +67,10 @@ public class Check extends GameCommand {
 		sender.sendMessage(ChatColor.RED
 				+ "-----------------------------------------------");
 		if (split.length == 1) {
+			match = true;
 			displayPage(1, (Player) sender);
 		} else if (split.length == 3) {
+			match = true;
 			if (split[1].equalsIgnoreCase("page")) {
 				if (!Configuration.canParse(split[2])) {
 					sender.sendMessage(ChatColor.RED + "Invalid page number!");
