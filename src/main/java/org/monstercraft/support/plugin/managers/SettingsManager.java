@@ -139,6 +139,7 @@ public class SettingsManager {
 		config.options().header("DO NOT MODIFY");
 		tickets = config.getStringList("TICKETS");
 		if (!tickets.isEmpty()) {
+			int valid = 0;
 			for (String str : tickets) {
 				if (str.contains("|")) {
 					int count = 0;
@@ -148,6 +149,7 @@ public class SettingsManager {
 						}
 					}
 					if (count == 7) {
+						valid++;
 						int idx1 = str.indexOf("|");
 						int idx2 = str.indexOf("|", idx1 + 1);
 						int idx3 = str.indexOf("|", idx2 + 1);
@@ -172,6 +174,11 @@ public class SettingsManager {
 						}
 					}
 				}
+			}
+			if (valid == 0) {
+				File OLD_TICKETS_FILE = new File(SETTINGS_PATH,
+						"LEGACY_Tickets.txt");
+				TICKETS_FILE.renameTo(OLD_TICKETS_FILE); // old file
 			}
 		}
 	}
@@ -200,6 +207,8 @@ public class SettingsManager {
 		}
 		if (!tickets.isEmpty()) {
 			config.set("TICKETS", tickets);
+		} else {
+			return; // prevent creating an enpty file. Not needed
 		}
 		save(config, TICKETS_FILE);
 	}

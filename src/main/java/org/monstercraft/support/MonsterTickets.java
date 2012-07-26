@@ -34,6 +34,7 @@ public final class MonsterTickets extends JavaPlugin {
 				mysql = new MySQL();
 				Variables.tickets.addAll(mysql.readTickets(1));
 			} catch (Exception e) {
+				Configuration.debug(e);
 				Configuration
 						.log(ChatColor.DARK_RED
 								+ "Error connecting to database! Falling back to file backend!");
