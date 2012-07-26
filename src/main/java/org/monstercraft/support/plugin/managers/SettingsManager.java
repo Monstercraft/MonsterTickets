@@ -42,9 +42,6 @@ public class SettingsManager {
 		this.plugin = plugin;
 		this.SETTINGS_PATH = plugin.getDataFolder().getAbsolutePath();
 		load();
-		if (!Variables.useMYSQLBackend) {
-			loadTickets();
-		}
 	}
 
 	private void save(final FileConfiguration config, final File file) {
