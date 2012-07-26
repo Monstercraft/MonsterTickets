@@ -1,5 +1,10 @@
 package org.monstercraft.support.plugin.command.commands;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,10 +17,12 @@ import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
 public class Check extends GameCommand {
 
-	// private static MonsterTickets instance;
+	private static MonsterTickets instance;
+
+	ArrayList<HelpTicket> tickets = new ArrayList<HelpTicket>();
 
 	public Check(MonsterTickets instance) {
-		// Check.instance = instance;
+		Check.instance = instance;
 	}
 
 	private boolean show_closed;
@@ -27,6 +34,7 @@ public class Check extends GameCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
+		tickets = getTickets();
 		show_closed = false;
 		for (String s : split) {
 			if (s.equalsIgnoreCase("-closed")) {
@@ -65,7 +73,7 @@ public class Check extends GameCommand {
 					sender.sendMessage(ChatColor.RED + "Invalid page number!");
 					return true;
 				}
-				if ((int) (Variables.tickets.size() / 15 + 1) < Integer
+				if ((int) (tickets.size() / 15 + 1) < Integer
 						.parseInt(split[2])) {
 					sender.sendMessage(ChatColor.RED + "Invalid page number!");
 					return true;
@@ -85,36 +93,32 @@ public class Check extends GameCommand {
 				sender.sendMessage(ChatColor.RED + "Invalid number!");
 				return true;
 			}
-			int id;
-			try {
-				id = Variables.tickets.getLast().getID() + 1;
-			} catch (Exception e) {
-				id = 1;
-			}
-			if (id < Integer.parseInt(split[1])
+			int id = instance.getNextTicketID();
+			if (id <= Integer.parseInt(split[1])
 					|| Integer.parseInt(split[1]) < 1) {
 				sender.sendMessage(ChatColor.RED + "Invalid ticket number!");
 				return true;
 			}
 			int ticketID = Integer.parseInt(split[1]);
-			for (HelpTicket t : Variables.tickets) {
+			for (HelpTicket t : tickets) {
 				if (t.getID() == ticketID) {
 					displayTicket(t, sender);
 				}
 			}
 		}
+		tickets.clear();
 		return true;
 	}
 
 	private void displayPage(int page, CommandSender sender) {
-		int numPages = Variables.tickets.size() / 15;
+		int numPages = tickets.size() / 15;
 		if (numPages == 0) {
 			numPages = 1;
 		}
 		int start = (page - 1) * 15;
 		int end = start + 15;
 		int c = 0;
-		for (HelpTicket t : Variables.tickets) {
+		for (HelpTicket t : tickets) {
 			if (c < start) {
 				c++;
 				continue;
@@ -129,7 +133,7 @@ public class Check extends GameCommand {
 			c++;
 		}
 		sender.sendMessage(ChatColor.RED + "-----------[ " + page + " of "
-				+ (int) (Variables.tickets.size() / 15 + 1) + " ]-------------");
+				+ (int) (tickets.size() / 15 + 1) + " ]-------------");
 	}
 
 	private void displayTicket(HelpTicket t, CommandSender sender) {
@@ -154,6 +158,33 @@ public class Check extends GameCommand {
 		} else {
 			sender.sendMessage(ChatColor.RED
 					+ "That ticket is closed. If you wish to check a closed ticket add -closed to the end of the command.");
+		}
+	}
+
+	private ArrayList<HelpTicket> getTickets() {
+		ArrayList<HelpTicket> tickets = new ArrayList<HelpTicket>();
+		if (!Variables.useMYSQLBackend) {
+			tickets.addAll(Variables.tickets);
+			return tickets;
+		} else {
+			try {
+				tickets.addAll(instance.getMySQL().readTickets(1));
+				tickets.addAll(instance.getMySQL().readTickets(2));
+				if (show_closed) {
+					tickets.addAll(instance.getMySQL().readTickets(3));
+				}
+			} catch (SQLException e) {
+				tickets.addAll(Variables.tickets);
+				return tickets;
+			}
+			Collections.sort(tickets, new Comparator<HelpTicket>() {
+				@Override
+				public int compare(HelpTicket t1, HelpTicket t2) {
+					return t1.getID() - t2.getID();
+				}
+
+			});
+			return tickets;
 		}
 	}
 

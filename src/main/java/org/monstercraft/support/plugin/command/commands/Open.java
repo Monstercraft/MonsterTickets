@@ -65,12 +65,7 @@ public class Open extends GameCommand {
 			desc.append(split[i]);
 			desc.append(" ");
 		}
-		int id;
-		try {
-			id = Variables.tickets.getLast().getID() + 1;
-		} catch (Exception e) {
-			id = 1;
-		}
+		int id = instance.getNextTicketID();
 		HelpTicket t = new HelpTicket(id, desc.toString().trim()
 				.replace("|", ""), sender.getName(),
 				((Player) sender).getLocation());

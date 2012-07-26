@@ -38,9 +38,10 @@ public class MySQL {
 		}
 	}
 
-	public ArrayList<HelpTicket> readTickets() throws SQLException {
+	public ArrayList<HelpTicket> readTickets(int Status) throws SQLException {
 		PreparedStatement ps = connection
-				.prepareStatement("SELECT * FROM `tickets`");
+				.prepareStatement("SELECT * FROM `tickets` WHERE status == ?");
+		ps.setInt(1, Status);
 		ResultSet rs = ps.executeQuery();
 		ArrayList<HelpTicket> tickets = new ArrayList<HelpTicket>();
 		while (rs.next()) {
@@ -61,6 +62,17 @@ public class MySQL {
 			tickets.add(h);
 		}
 		return tickets;
+	}
+
+	public int readLastRowID() throws SQLException {
+		PreparedStatement ps = connection
+				.prepareStatement("SELECT * FROM `tickets` ORDER BY `id` DESC LIMIT 1");
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			return rs.getInt("id");
+		}
+		return 0;
+
 	}
 
 	public void createTicket(HelpTicket ticket) throws SQLException {

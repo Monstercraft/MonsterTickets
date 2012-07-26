@@ -63,21 +63,22 @@ public class Close extends GameCommand {
 				continue;
 			}
 			if (t.getModName().equalsIgnoreCase(modname)) {
+				Player p = Bukkit.getPlayer(t.getNoobName());
+				int id = t.getID();
 				t.close();
 				sendToDB(t);
-				Player p = Bukkit.getPlayer(t.getNoobName());
 				if (p != null) {
 					p.sendMessage(ChatColor.GREEN
 							+ "Your support ticket has been closed.");
 				}
 				if (mod != null) {
-					mod.sendMessage(ChatColor.GREEN + "Ticket " + t.getID()
+					mod.sendMessage(ChatColor.GREEN + "Ticket " + id
 							+ " sucessfully closed.");
 					for (Player pl : Bukkit.getOnlinePlayers()) {
 						if (instance.getPermissionsHandler().hasNode(pl,
 								"monstertickets.mod")) {
 							pl.sendMessage(ChatColor.GREEN + mod.getName()
-									+ " closed ticket " + t.getID());
+									+ " closed ticket " + id);
 						}
 					}
 				}
@@ -99,20 +100,20 @@ public class Close extends GameCommand {
 				if (t.getStatus().equals(Status.OPEN)) {
 					t.Claim(mod.getName());
 				}
+				Player p = Bukkit.getPlayer(t.getNoobName());
 				t.close();
 				sendToDB(t);
-				Player p = Bukkit.getPlayer(t.getNoobName());
 				if (p != null) {
 					p.sendMessage(ChatColor.GREEN
 							+ "Your support ticket has been closed.");
 				}
-				mod.sendMessage(ChatColor.GREEN + "Ticket " + t.getID()
+				mod.sendMessage(ChatColor.GREEN + "Ticket " + id
 						+ " sucessfully closed.");
 				for (Player pl : Bukkit.getOnlinePlayers()) {
 					if (instance.getPermissionsHandler().hasNode(pl,
 							"monstertickets.mod")) {
 						pl.sendMessage(ChatColor.GREEN + mod.getName()
-								+ " closed ticket " + t.getID());
+								+ " closed ticket " + id);
 					}
 				}
 				return;
@@ -127,9 +128,9 @@ public class Close extends GameCommand {
 				if (t.getStatus().equals(Status.OPEN)) {
 					t.Claim(sender.getName());
 				}
+				Player p = Bukkit.getPlayer(t.getNoobName());
 				t.close();
 				sendToDB(t);
-				Player p = Bukkit.getPlayer(t.getNoobName());
 				if (p != null) {
 					p.sendMessage(ChatColor.GREEN
 							+ "Your support ticket has been forced closed, if this was a mistake please create a new ticket.");
@@ -159,8 +160,9 @@ public class Close extends GameCommand {
 		if (Variables.useMYSQLBackend) {
 			try {
 				instance.getMySQL().closeTicket(t);
+				Variables.tickets.remove(t);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				Configuration.debug(e);
 			}
 		}
 	}

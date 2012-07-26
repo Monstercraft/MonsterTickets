@@ -1,6 +1,7 @@
 package org.monstercraft.support;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -30,7 +31,7 @@ public final class MonsterTickets extends JavaPlugin {
 		if (Variables.useMYSQLBackend) {
 			try {
 				mysql = new MySQL();
-				Variables.tickets.addAll(mysql.readTickets());
+				Variables.tickets.addAll(mysql.readTickets(1));
 			} catch (Exception e) {
 				Configuration
 						.log("Error connecting to database! Falling back to file backend!");
@@ -78,6 +79,19 @@ public final class MonsterTickets extends JavaPlugin {
 
 	public MySQL getMySQL() {
 		return mysql;
+	}
+
+	public int getNextTicketID() {
+		if (Variables.useMYSQLBackend) {
+			try {
+				return mysql.readLastRowID() + 1;
+			} catch (SQLException e) {
+			}
+		}
+		if (!Variables.tickets.isEmpty()) {
+			return Variables.tickets.getLast().getID() + 1;
+		}
+		return 1;
 	}
 
 }

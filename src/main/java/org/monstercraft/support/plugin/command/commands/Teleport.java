@@ -15,10 +15,10 @@ import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
 public class Teleport extends GameCommand {
 
-	// private static MonsterTickets instance;
+	private static MonsterTickets instance;
 
 	public Teleport(MonsterTickets instance) {
-		// Teleport.instance = instance;
+		Teleport.instance = instance;
 	}
 
 	@Override
@@ -40,15 +40,8 @@ public class Teleport extends GameCommand {
 			sender.sendMessage(ChatColor.GREEN + "Invalid number!");
 			return true;
 		}
-		int max = 0;
-		try {
-			max = Variables.tickets.getLast().getID();
-		} catch (Exception e) {
-			sender.sendMessage(ChatColor.GREEN
-					+ "There are no possible tickets to teleport to!");
-			return true;
-		}
-		if (Integer.parseInt(split[1]) > max || 1 > Integer.parseInt(split[1])) {
+		int max = instance.getNextTicketID();
+		if (Integer.parseInt(split[1]) >= max || 1 > Integer.parseInt(split[1])) {
 			sender.sendMessage(ChatColor.GREEN
 					+ "No ticket exists with that number!");
 			return true;

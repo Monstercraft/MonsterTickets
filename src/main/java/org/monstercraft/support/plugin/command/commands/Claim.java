@@ -50,7 +50,7 @@ public class Claim extends GameCommand {
 				}
 			}
 		}
-		if (Integer.parseInt(split[1]) > Variables.tickets.getLast().getID()
+		if (Integer.parseInt(split[1]) >= instance.getNextTicketID()
 				|| 1 > Integer.parseInt(split[1])) {
 			sender.sendMessage(ChatColor.GREEN
 					+ "No ticket exists with that number!");
