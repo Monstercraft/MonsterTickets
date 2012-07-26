@@ -59,6 +59,9 @@ public class MonsterTicketListener implements Listener {
 						if (plugin.getPermissionsHandler().hasNode(pl,
 								"monstertickets.mod.spy")
 								&& pl != mod && pl != noob) {
+							if (Variables.nospy.contains(pl)) {
+								continue;
+							}
 							pl.sendMessage(ChatColor.DARK_BLUE + "[Spy]"
 									+ ChatColor.RED + "[Support] "
 									+ event.getPlayer().getDisplayName() + ": "
@@ -114,6 +117,9 @@ public class MonsterTicketListener implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(PlayerQuitEvent event) {
+		if (Variables.nospy.contains(event.getPlayer())) {
+			Variables.nospy.remove(event.getPlayer());
+		}
 		for (HelpTicket t : Variables.tickets) {
 			if (t.getModName().equalsIgnoreCase(event.getPlayer().getName())
 					|| t.getNoobName().equalsIgnoreCase(

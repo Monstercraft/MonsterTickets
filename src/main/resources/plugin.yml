@@ -21,12 +21,12 @@ commands:
   modlist:
     description: Check which mods are online.
     usage: /modlist
-  mtreload:
-    description: Reloads the plugins settings.
-    usage: /mtreload
   tp-ticket:
     description: Teleports to the open location of a ticket.
     usage: /tp-ticket (id)
+  mt:
+    description: All of the extra commands.
+    usage: /mt (command) (args)
 permissions:
   monstertickets.help:
     description: Open a support ticket.
@@ -49,6 +49,9 @@ permissions:
   monstertickets.tp:
     description: Allows the mod to tp to the specfied ticket id.
     default: op
+  monstertickets.toggle:
+    description: Allows the player to modify toggles on themselves.
+    default: op
   monstertickets.mod:
     description: All the nodes
     default: op
@@ -59,3 +62,4 @@ permissions:
       monstertickets.check: true
       monstertickets.list: true
       monstertickets.tp: true
+      monstertickets.toggle: true

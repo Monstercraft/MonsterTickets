@@ -6,7 +6,7 @@ import org.monstercraft.support.MonsterTickets;
 import org.monstercraft.support.plugin.command.GameCommand;
 
 public class Reload extends GameCommand {
-	
+
 	private static MonsterTickets instance;
 
 	public Reload(MonsterTickets instance) {
@@ -15,7 +15,8 @@ public class Reload extends GameCommand {
 
 	@Override
 	public boolean canExecute(CommandSender sender, String[] split) {
-		return split[0].equalsIgnoreCase("mtreload");
+		return split.length > 1 && split[0].equalsIgnoreCase("mt")
+				&& split[1].equalsIgnoreCase("reload");
 	}
 
 	@Override

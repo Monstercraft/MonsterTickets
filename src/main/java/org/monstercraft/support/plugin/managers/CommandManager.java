@@ -15,6 +15,7 @@ import org.monstercraft.support.plugin.command.commands.List;
 import org.monstercraft.support.plugin.command.commands.Open;
 import org.monstercraft.support.plugin.command.commands.Reload;
 import org.monstercraft.support.plugin.command.commands.Teleport;
+import org.monstercraft.support.plugin.command.commands.Toggle;
 
 /**
  * This class manages all of the plugins commands.
@@ -38,6 +39,7 @@ public class CommandManager {
 			gameCommands.add(new Close(instance));
 			gameCommands.add(new Claim(instance));
 			gameCommands.add(new Teleport(instance));
+			gameCommands.add(new Toggle(instance));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

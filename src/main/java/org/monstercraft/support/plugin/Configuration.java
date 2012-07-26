@@ -1,9 +1,11 @@
 package org.monstercraft.support.plugin;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
 /**
@@ -61,15 +63,14 @@ public class Configuration {
 	}
 
 	public static class Variables {
-
 		public static LinkedList<HelpTicket> tickets = new LinkedList<HelpTicket>();
+		public static ArrayList<Player> nospy = new ArrayList<Player>();
 		public static boolean overridehelp = false;
 		public static boolean useMYSQLBackend = false;
 		public static String db_host;
 		public static String db_username;
 		public static String db_password;
 		public static String db_name;
-
 	}
 
 }

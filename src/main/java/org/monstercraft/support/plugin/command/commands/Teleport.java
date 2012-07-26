@@ -34,9 +34,11 @@ public class Teleport extends GameCommand {
 		}
 		if (split.length < 2) {
 			sender.sendMessage(ChatColor.GREEN + "Invalid command usage!");
+			return true;
 		}
 		if (!Configuration.canParse(split[1])) {
 			sender.sendMessage(ChatColor.GREEN + "Invalid number!");
+			return true;
 		}
 		int max = 0;
 		try {
@@ -44,6 +46,7 @@ public class Teleport extends GameCommand {
 		} catch (Exception e) {
 			sender.sendMessage(ChatColor.GREEN
 					+ "There are no possible tickets to teleport to!");
+			return true;
 		}
 		if (Integer.parseInt(split[1]) > max || 1 > Integer.parseInt(split[1])) {
 			sender.sendMessage(ChatColor.GREEN
