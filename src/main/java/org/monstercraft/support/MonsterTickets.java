@@ -3,6 +3,7 @@ package org.monstercraft.support;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,7 +35,8 @@ public final class MonsterTickets extends JavaPlugin {
 				Variables.tickets.addAll(mysql.readTickets(1));
 			} catch (Exception e) {
 				Configuration
-						.log("Error connecting to database! Falling back to file backend!");
+						.log(ChatColor.DARK_RED
+								+ "Error connecting to database! Falling back to file backend!");
 				Variables.useMYSQLBackend = false;
 				settings.loadTickets();
 			}

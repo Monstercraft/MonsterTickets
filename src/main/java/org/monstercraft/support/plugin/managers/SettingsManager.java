@@ -179,6 +179,7 @@ public class SettingsManager {
 	public void saveTicketsConfig() {
 		File TICKETS_FILE = new File(SETTINGS_PATH + File.separator
 				+ "Tickets.dat");
+		TICKETS_FILE.delete();
 		ArrayList<String> tickets = new ArrayList<String>();
 		FileConfiguration config = new YamlConfiguration();
 		config.options().header("DO NOT MODIFY");
