@@ -24,11 +24,6 @@ public class Adminchat extends GameCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, String[] split) {
-		if (split.length == 1) {
-			sender.sendMessage(ChatColor.GREEN
-					+ "You must write a message to send!.");
-			return true;
-		}
 		String[] temp = new String[split.length - 1];
 		for (int i = 1; i < split.length; i++) {
 			temp[i - 1] = split[i];

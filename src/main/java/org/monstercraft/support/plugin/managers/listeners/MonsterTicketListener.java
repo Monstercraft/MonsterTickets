@@ -125,6 +125,13 @@ public class MonsterTicketListener implements Listener {
 			msg = "/request " + msg.substring(6);
 			event.setMessage(msg);
 		}
+		if (msg.startsWith("/ac") && msg.length() < 4) {
+			event.setMessage("/mt toggle ac");
+		}
+
+		if (msg.startsWith("/adminchat") && msg.length() < 11) {
+			event.setMessage("/mt toggle ac");
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)

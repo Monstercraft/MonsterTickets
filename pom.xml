@@ -5,7 +5,7 @@
 
 	<groupId>org.monstercraft.support</groupId>
 	<artifactId>MonsterTickets</artifactId>
-	<version>1.03</version>
+	<version>1.04</version>
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
