@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -38,7 +38,7 @@ public class MonsterTicketListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onChat(PlayerChatEvent event) {
+	public void onChat(AsyncPlayerChatEvent event) {
 		for (HelpTicket t : Variables.tickets) {
 			Player mod = Bukkit.getPlayer(t.getModName());
 			Player noob = Bukkit.getPlayer(t.getNoobName());
@@ -68,9 +68,9 @@ public class MonsterTicketListener implements Listener {
 									+ ChatColor.WHITE + event.getMessage());
 						}
 					}
+					event.setCancelled(true);
+					return;
 				}
-				event.setCancelled(true);
-				return;
 			}
 		}
 		if (Variables.adminchat.contains(event.getPlayer())) {
