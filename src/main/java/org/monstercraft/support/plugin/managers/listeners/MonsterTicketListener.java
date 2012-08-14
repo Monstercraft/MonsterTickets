@@ -76,7 +76,8 @@ public class MonsterTicketListener implements Listener {
 		}
 		if (Variables.adminchat.contains(event.getPlayer())) {
 			Bukkit.getPluginManager().callEvent(
-					new AdminChatEvent(event.getPlayer(), event.getMessage()));
+					new AdminChatEvent(event.getPlayer().getDisplayName(),
+							event.getMessage()));
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				if (plugin.getPermissionsHandler().hasNode(p,
 						"monstertickets.adminchat")) {

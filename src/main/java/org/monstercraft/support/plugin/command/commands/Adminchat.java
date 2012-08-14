@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.monstercraft.support.MonsterTickets;
 import org.monstercraft.support.plugin.command.GameCommand;
+import org.monstercraft.support.plugin.events.AdminChatEvent;
 
 public class Adminchat extends GameCommand {
 
@@ -34,6 +35,8 @@ public class Adminchat extends GameCommand {
 			sb.append(s);
 			sb.append(" ");
 		}
+		Bukkit.getPluginManager().callEvent(
+				new AdminChatEvent(sender.getName(), sb.toString().trim()));
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			if (instance.getPermissionsHandler().hasNode(p,
 					"monstertickets.adminchat")) {
