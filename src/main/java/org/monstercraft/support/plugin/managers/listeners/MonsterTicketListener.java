@@ -15,6 +15,7 @@ import org.monstercraft.support.plugin.Configuration;
 import org.monstercraft.support.plugin.Configuration.Variables;
 import org.monstercraft.support.plugin.command.commands.Check;
 import org.monstercraft.support.plugin.command.commands.Close;
+import org.monstercraft.support.plugin.events.AdminChatEvent;
 import org.monstercraft.support.plugin.util.Status;
 import org.monstercraft.support.plugin.wrappers.HelpTicket;
 
@@ -74,6 +75,8 @@ public class MonsterTicketListener implements Listener {
 			}
 		}
 		if (Variables.adminchat.contains(event.getPlayer())) {
+			Bukkit.getPluginManager().callEvent(
+					new AdminChatEvent(event.getPlayer(), event.getMessage()));
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				if (plugin.getPermissionsHandler().hasNode(p,
 						"monstertickets.adminchat")) {

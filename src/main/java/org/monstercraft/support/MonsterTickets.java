@@ -3,9 +3,11 @@ package org.monstercraft.support;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.monstercraft.support.plugin.Configuration;
 import org.monstercraft.support.plugin.Configuration.Variables;
@@ -21,7 +23,7 @@ import org.monstercraft.support.plugin.util.Updater;
 public final class MonsterTickets extends JavaPlugin {
 
 	private CommandManager commandManager;
-	private PermissionsHandler perms;
+	private static PermissionsHandler perms;
 	private SettingsManager settings;
 	private MySQL mysql;
 
@@ -97,4 +99,12 @@ public final class MonsterTickets extends JavaPlugin {
 		return 1;
 	}
 
+	public static void sendAdminChatMessage(String player, String message) {
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			if (perms.hasNode(p, "monstertickets.adminchat")) {
+				p.sendMessage(ChatColor.RED + "[Admin Chat]" + player + ": "
+						+ ChatColor.RESET + message);
+			}
+		}
+	}
 }
