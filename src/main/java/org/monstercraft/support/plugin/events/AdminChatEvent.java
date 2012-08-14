@@ -6,8 +6,6 @@ import org.bukkit.event.HandlerList;
 
 public class AdminChatEvent extends Event {
 
-	public static final String CUSTOM_TYPE = "org.monstercraft.support.plugin.events.AdminChatEvent";
-
 	private static final HandlerList handlers = new HandlerList();
 
 	private Player player;
