@@ -83,7 +83,7 @@ public class MonsterTicketListener implements Listener {
 						"monstertickets.adminchat")) {
 					p.sendMessage(ChatColor.RED + "[Admin Chat]"
 							+ event.getPlayer().getName() + ": "
-							+ ChatColor.RESET + event.getMessage());
+							+ ChatColor.getByChar('b') + event.getMessage());
 				}
 			}
 			event.setCancelled(true);
