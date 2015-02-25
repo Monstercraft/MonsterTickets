@@ -5,93 +5,94 @@ import org.monstercraft.support.plugin.util.Status;
 
 public class HelpTicket {
 
-	private final int id;
+    private final int id;
 
-	private Status status;
+    private Status status;
 
-	private final String description;
+    private final String description;
 
-	private final String noobname;
+    private final String noobname;
 
-	private String modname;
+    private String modname;
 
-	private int x;
+    private final int x;
 
-	private int y;
+    private final int y;
 
-	private int z;
+    private final int z;
 
-	private String worldname;
+    private final String worldname;
 
-	public HelpTicket(final int id, final String description,
-			final String player, Location location) {
-		this.id = id;
-		this.description = description;
-		this.status = Status.OPEN;
-		this.noobname = player;
-		this.x = (int) location.getX();
-		this.y = (int) location.getY();
-		this.z = (int) location.getZ();
-		this.worldname = location.getWorld().getName();
-		this.modname = "";
-	}
+    public HelpTicket(final int id, final String description,
+            final String player, final int x, final int y, final int z,
+            final String worldname) {
+        this.id = id;
+        this.description = description;
+        status = Status.OPEN;
+        noobname = player;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.worldname = worldname;
+        modname = "";
+    }
 
-	public HelpTicket(final int id, final String description,
-			final String player, int x, int y, int z, String worldname) {
-		this.id = id;
-		this.description = description;
-		this.status = Status.OPEN;
-		this.noobname = player;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.worldname = worldname;
-		this.modname = "";
-	}
+    public HelpTicket(final int id, final String description,
+            final String player, final Location location) {
+        this.id = id;
+        this.description = description;
+        status = Status.OPEN;
+        noobname = player;
+        x = (int) location.getX();
+        y = (int) location.getY();
+        z = (int) location.getZ();
+        worldname = location.getWorld().getName();
+        modname = "";
+    }
 
-	public String getDescription() {
-		return description.trim();
-	}
+    public void Claim(final String modname) {
+        this.modname = modname;
+        status = Status.CLAIMED;
+    }
 
-	public int getID() {
-		return id;
-	}
+    public void close() {
+        status = Status.CLOSED;
+    }
 
-	public Status getStatus() {
-		return status;
-	}
+    public String getDescription() {
+        return description.trim();
+    }
 
-	public String getNoobName() {
-		return noobname.trim();
-	}
+    public int getID() {
+        return id;
+    }
 
-	public String getModName() {
-		return modname.trim();
-	}
+    public String getModName() {
+        return modname.trim();
+    }
 
-	public int getX() {
-		return x;
-	}
+    public String getNoobName() {
+        return noobname.trim();
+    }
 
-	public int getY() {
-		return y;
-	}
+    public Status getStatus() {
+        return status;
+    }
 
-	public int getZ() {
-		return z;
-	}
+    public String getWorldName() {
+        return worldname.trim();
+    }
 
-	public String getWorldName() {
-		return worldname.trim();
-	}
+    public int getX() {
+        return x;
+    }
 
-	public void Claim(String modname) {
-		this.modname = modname;
-		this.status = Status.CLAIMED;
-	}
+    public int getY() {
+        return y;
+    }
 
-	public void close() {
-		this.status = Status.CLOSED;
-	}
+    public int getZ() {
+        return z;
+    }
 
 }

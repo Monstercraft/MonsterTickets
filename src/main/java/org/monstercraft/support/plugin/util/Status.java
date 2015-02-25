@@ -1,15 +1,15 @@
 package org.monstercraft.support.plugin.util;
 
 public enum Status {
-	OPEN(1), CLAIMED(2), CLOSED(3);
+    OPEN(1), CLAIMED(2), CLOSED(3);
 
-	Status(int id) {
-		this.id = id;
-	}
+    private int id;
 
-	public int toInt() {
-		return id;
-	}
+    Status(final int id) {
+        this.id = id;
+    }
 
-	private int id;
+    public int toInt() {
+        return id;
+    }
 }

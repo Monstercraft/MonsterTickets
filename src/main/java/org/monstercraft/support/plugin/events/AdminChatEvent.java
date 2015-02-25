@@ -5,31 +5,32 @@ import org.bukkit.event.HandlerList;
 
 public class AdminChatEvent extends Event {
 
-	private static final HandlerList handlers = new HandlerList();
+    public static HandlerList getHandlerList() {
+        return AdminChatEvent.handlers;
+    }
 
-	private String player;
+    private static final HandlerList handlers = new HandlerList();
 
-	private String message;
+    private final String player;
 
-	public AdminChatEvent(String sender, String message) {
-		this.player = sender;
-		this.message = message;
-	}
+    private final String message;
 
-	public String getSender() {
-		return player;
-	}
+    public AdminChatEvent(final String sender, final String message) {
+        player = sender;
+        this.message = message;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return AdminChatEvent.handlers;
+    }
 
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+    public String getSender() {
+        return player;
+    }
 
 }

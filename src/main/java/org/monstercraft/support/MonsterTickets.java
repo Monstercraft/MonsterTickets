@@ -22,89 +22,94 @@ import org.monstercraft.support.plugin.util.Updater;
 
 public final class MonsterTickets extends JavaPlugin {
 
-	private CommandManager commandManager;
-	private static PermissionsHandler perms;
-	private SettingsManager settings;
-	private MySQL mysql;
+    public static void sendAdminChatMessage(final String player,
+            final String message) {
+        for (final Player p : Bukkit.getOnlinePlayers()) {
+            if (MonsterTickets.perms.hasNode(p, "monstertickets.adminchat")) {
+                p.sendMessage(ChatColor.RED + "[Admin Chat]" + player + ": "
+                        + ChatColor.RESET + message);
+            }
+        }
+    }
 
-	public void onEnable() {
-		settings = new SettingsManager(this);
-		commandManager = new CommandManager(this);
-		perms = new PermissionsHandler();
-		if (Variables.useMYSQLBackend) {
-			try {
-				mysql = new MySQL();
-				Variables.tickets.addAll(mysql.readTickets(1));
-			} catch (Exception e) {
-				Configuration.debug(e);
-				Configuration
-						.log(ChatColor.DARK_RED
-								+ "Error connecting to database! Falling back to file backend!");
-				Variables.useMYSQLBackend = false;
-				settings.loadTickets();
-			}
-		} else {
-			settings.loadTickets();
-		}
-		getServer().getPluginManager().registerEvents(
-				new MonsterTicketListener(this), this);
-		Configuration.log("MonsterTickets has been enabled!");
-		Configuration.log("Setting up metrics!");
-		try {
-			new Metrics(this).start();
-		} catch (IOException e) {
-		}
-		this.getServer()
-				.getScheduler()
-				.scheduleAsyncDelayedTask(this,
-						new Updater(this.getDescription().getVersion()));
-	}
+    private CommandManager commandManager;
+    private static PermissionsHandler perms;
+    private SettingsManager settings;
 
-	public void onDisable() {
-		Close.closeClaimed();
-		settings.save();
-		if (!Variables.useMYSQLBackend) {
-			settings.saveTicketsConfig();
-		}
-		Configuration.log("MonsterTickets has been disabled.");
-	}
+    private MySQL mysql;
 
-	public boolean onCommand(CommandSender sender, Command command,
-			String label, String[] args) {
-		return commandManager.onGameCommand(sender, command, label, args);
-	}
+    public MySQL getMySQL() {
+        return mysql;
+    }
 
-	public PermissionsHandler getPermissionsHandler() {
-		return perms;
-	}
+    public int getNextTicketID() {
+        if (Variables.useMYSQLBackend) {
+            try {
+                return mysql.readLastRowID() + 1;
+            } catch (final SQLException e) {
+            }
+        }
+        if (!Variables.tickets.isEmpty()) {
+            return Variables.tickets.getLast().getID() + 1;
+        }
+        return 1;
+    }
 
-	public SettingsManager getSettingsManager() {
-		return settings;
-	}
+    public PermissionsHandler getPermissionsHandler() {
+        return MonsterTickets.perms;
+    }
 
-	public MySQL getMySQL() {
-		return mysql;
-	}
+    public SettingsManager getSettingsManager() {
+        return settings;
+    }
 
-	public int getNextTicketID() {
-		if (Variables.useMYSQLBackend) {
-			try {
-				return mysql.readLastRowID() + 1;
-			} catch (SQLException e) {
-			}
-		}
-		if (!Variables.tickets.isEmpty()) {
-			return Variables.tickets.getLast().getID() + 1;
-		}
-		return 1;
-	}
+    @Override
+    public boolean onCommand(final CommandSender sender, final Command command,
+            final String label, final String[] args) {
+        return commandManager.onGameCommand(sender, command, label, args);
+    }
 
-	public static void sendAdminChatMessage(String player, String message) {
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (perms.hasNode(p, "monstertickets.adminchat")) {
-				p.sendMessage(ChatColor.RED + "[Admin Chat]" + player + ": "
-						+ ChatColor.RESET + message);
-			}
-		}
-	}
+    @Override
+    public void onDisable() {
+        Close.closeClaimed();
+        settings.save();
+        if (!Variables.useMYSQLBackend) {
+            settings.saveTicketsConfig();
+        }
+        Configuration.log("MonsterTickets has been disabled.");
+    }
+
+    @Override
+    public void onEnable() {
+        settings = new SettingsManager(this);
+        commandManager = new CommandManager(this);
+        MonsterTickets.perms = new PermissionsHandler();
+        if (Variables.useMYSQLBackend) {
+            try {
+                mysql = new MySQL();
+                Variables.tickets.addAll(mysql.readTickets(1));
+            } catch (final Exception e) {
+                Configuration.debug(e);
+                Configuration
+                        .log(ChatColor.DARK_RED
+                                + "Error connecting to database! Falling back to file backend!");
+                Variables.useMYSQLBackend = false;
+                settings.loadTickets();
+            }
+        } else {
+            settings.loadTickets();
+        }
+        this.getServer().getPluginManager()
+                .registerEvents(new MonsterTicketListener(this), this);
+        Configuration.log("MonsterTickets has been enabled!");
+        Configuration.log("Setting up metrics!");
+        try {
+            new Metrics(this).start();
+        } catch (final IOException e) {
+        }
+        this.getServer()
+                .getScheduler()
+                .scheduleAsyncDelayedTask(this,
+                        new Updater(this.getDescription().getVersion()));
+    }
 }
